@@ -7,20 +7,41 @@ import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Optional;
 
 import com.antiaction.zwave.constants.Constants;
-import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.GenericDeviceClass;
-import com.antiaction.zwave.constants.MessageType;
-import com.antiaction.zwave.messages.GetCapabilities;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
+import com.antiaction.zwave.messages.ApplicationUpdateResp;
+import com.antiaction.zwave.messages.GetCapabilitiesReq.GetCapabilitiesResp;
+import com.antiaction.zwave.messages.GetControllerParamsReq.GetControllerParamsResp;
+import com.antiaction.zwave.messages.IdentifyNodeReq.IdentifyNodeResp;
+import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
+import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
+import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
+import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
+import com.antiaction.zwave.messages.command.BasicCommand;
+import com.antiaction.zwave.messages.command.BasicCommand.Basic;
+import com.antiaction.zwave.messages.command.BatteryCommand;
+import com.antiaction.zwave.messages.command.BatteryCommand.Battery;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
+import com.antiaction.zwave.messages.command.WakeUpCommand;
+import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalCapabilitiesReport;
+import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalReport;
+import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpNotification;
 import com.antiaction.zwave.transport.SerialTransport;
 
-public class TestZWave {
+public class TestZWave implements ApplicationListener {
 
 	public static void main(String[] args) {
+		TestZWave p = new TestZWave();
+		p.Main(args);
+	}
+
+	protected Controller controller;
+
+	public void Main(String[] args) {
 		for(String s:NRSerialPort.getAvailableSerialPorts()){
 			System.out.println("Availible port: "+s);
 		}
@@ -28,8 +49,10 @@ public class TestZWave {
 		String portName = "/dev/ttyACM0";
 
 		SerialTransport transport = new SerialTransport();
-		Controller controller = new Controller();
+		controller = new Controller();
 		Parameter parameter;
+
+		IdentifyNodeResp identifyNodeResp;
 
 		byte[] data;
 		byte[] frame;
@@ -55,60 +78,82 @@ public class TestZWave {
 			System.exit(1);
 		}
 
+		Thread t = new Thread(controller);
+		t.start();
+
+		controller.addListener(this);
+
 		Optional<GenericDeviceClass> gdc;
 
-		List<Integer> registeredDevices = controller.getSerialApiGetInitData();
-		for (int i=0; i<registeredDevices.size(); ++i) {
-			int nodeId = registeredDevices.get(i);
-			int type = controller.getIdentifyNode(nodeId);
-			gdc = GenericDeviceClass.getType(type);
+		GetCapabilitiesResp getCapabilitiesResp = controller.getGetCapabilitiesReq().build().send();
+		getCapabilitiesResp.waitFor();
+		// debug
+        System.out.println("      Version: " + getCapabilitiesResp.majorVersion + "." + getCapabilitiesResp.minorVersion);
+        System.out.println("manufactureId: " + HexUtils.hexString2(getCapabilitiesResp.manufactureId));
+        System.out.println("   deviceType: " + HexUtils.hexString2(getCapabilitiesResp.deviceType));
+        System.out.println("     deviceId: " + HexUtils.hexString2(getCapabilitiesResp.deviceId));
+
+		SerialApiGetInitDataResp serialApiGetInitDataResp = controller.getSerialApiGetInitData().build().send();
+		serialApiGetInitDataResp.waitFor();
+		// debug
+		System.out.println(serialApiGetInitDataResp.controllerMode.name());
+		System.out.println(serialApiGetInitDataResp.controllerType.name());
+
+		for (int i=0; i<serialApiGetInitDataResp.registeredDevices.size(); ++i) {
+			int nodeId = serialApiGetInitDataResp.registeredDevices.get(i);
+			identifyNodeResp = controller.getIdentifyNode().setNodeId(nodeId).build().send();
+			identifyNodeResp.waitFor();
+			gdc = GenericDeviceClass.getType(identifyNodeResp.type);
+			// debug
 			System.out.println(Constants.INDENT + "Node " + nodeId + " Type: " + gdc.get().getLabel());
 		}
 
 		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x01});
-		int success = controller.set(parameter);
-		System.out.println(success);
+		SetControllerParamResp setControllerParamResp = controller.getSetControllerParam().setParameter(parameter).build().send();
+		setControllerParamResp.waitFor();
+		// debug
+		System.out.println(setControllerParamResp.success);
 
-		LinkedHashMap<Integer, Parameter> parameters = controller.get(new byte[] {(byte)0x51, (byte)0xDC, (byte)0xF2, (byte)0xFC});
-		Iterator<Parameter> iter = parameters.values().iterator();
+		byte[] parameterIds = new byte[] {(byte)0x51, (byte)0xDC, (byte)0xF2, (byte)0xFC};
+		GetControllerParamsResp getControllerParamsResp = controller.getGetControllerParams().setParameterIds(parameterIds).build().send();
+		getControllerParamsResp.waitFor();
+		Iterator<Parameter> iter = getControllerParamsResp.parameters.values().iterator();
 		while (iter.hasNext()) {
 			parameter = iter.next();
 			// debug
 			System.out.println(Constants.INDENT + HexUtils.hexString(parameter.id)+ " " + parameter.size + " " + HexUtils.hexString(parameter.value) + " / " + HexUtils.byteString(parameter.value));
 		}
 
-		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
-		success = controller.sendData(2, parameter);
-		System.out.println(Constants.INDENT + success);
-
-		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
-		success = controller.sendData(2, parameter);
-		System.out.println(Constants.INDENT + success);
+		SendDataResp sendDataResp;
 
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
-		success = controller.sendData(20, parameter);
-		System.out.println(Constants.INDENT + success);
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
 
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
-		success = controller.sendData(20, parameter);
-		System.out.println(Constants.INDENT + success);
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
+		sendDataResp = controller.getSendDataReq().setNodeId(20).setParameter(parameter).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
+		sendDataResp = controller.getSendDataReq().setNodeId(20).setParameter(parameter).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
 
 		//01 0D 00 13 0C 06 84 04 00 01 68 01 05 03 05
 
 		//parameter = new Parameter((byte)CommandClass.MANUFACTURER_SPECIFIC.getClassCode(), new byte[] {(byte)MANUFACTURER_SPECIFIC_GET});
 		//success = controller.sendData(2, parameter);
-
-		/*
-		data = new byte[] {
-				(byte)ControllerMessageType.GetCapabilities	.getId()
-		};
-		frame = FrameUtils.assemble(MessageType.Request, data);
-		controller.sendRaw(frame);
-		controller.receiveRaw();
-		*/
-
-		controller.sendRaw(GetCapabilities.buidGetCapabilitiesReq());
-		GetCapabilities.parseGetCapabilitiesResp(controller.receiveRaw());
 
 		/*
 		data = new byte[] {
@@ -120,13 +165,168 @@ public class TestZWave {
 		controller.receiveRaw();
 		*/
 
-		controller.loop();
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BatteryCommand.assembleBatteryReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BatteryCommand.assembleBatteryReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BasicCommand.assembleBasicReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BasicCommand.assembleBasicReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(24 * 60 * 60 * 1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		controller.removeListener(this);
 
 		controller.close();
 
 		transport.close();
 	}
 
-    private static final int MANUFACTURER_SPECIFIC_GET = 0x04;
+	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
+		// debug
+		//System.out.println("ApplicationUpdate nodeId: " + applicationUpdateResp.nodeId);
+		//byte[] data = new byte[] {(byte)0x13, (byte)applicationUpdateResp.nodeId, (byte)0x06, (byte)0x84, (byte)0x04, (byte)0x00, (byte)0x01, (byte)0x68, (byte)0x01, (byte)0x05, (byte)0x03};
+		//controller.queueOut.insert(FrameUtils.assemble(MessageType.Request, data));
+	}
+
+	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
+		ApplicationCommandHandlerData data = applicationCommandHandlerResp.data;
+		if (data != null) {
+			if (data instanceof Basic) {
+				Basic basicResp = (Basic)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic value: " + basicResp.value);
+			}
+			if (data instanceof ManufacturerSpecific) {
+				ManufacturerSpecific manufacturerSpecificResp = (ManufacturerSpecific)data;
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " manufactureId: " + HexUtils.hexString2(manufacturerSpecificResp.manufactureId));
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "    deviceType: " + HexUtils.hexString2(manufacturerSpecificResp.deviceType));
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "      deviceId: " + HexUtils.hexString2(manufacturerSpecificResp.deviceId));
+			}
+			if (data instanceof Battery) {
+				Battery batteryResp = (Battery)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " battery level: " + batteryResp.level + "%");
+			}
+			if (data instanceof WakeUpNotification) {
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up notification");
+			}
+			if (data instanceof WakeUpIntervalReport) {
+				WakeUpIntervalReport wakeUpIntervalReport = (WakeUpIntervalReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up intercal: " + wakeUpIntervalReport.interval + ", " + wakeUpIntervalReport.scale);
+			}
+			if (data instanceof WakeUpIntervalCapabilitiesReport) {
+				WakeUpIntervalCapabilitiesReport wakeUpIntervalCapabilitiesReport = (WakeUpIntervalCapabilitiesReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up minInterval: " + wakeUpIntervalCapabilitiesReport.minInterval);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up maxInterval: " + wakeUpIntervalCapabilitiesReport.maxInterval);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up defaultInterval: " + wakeUpIntervalCapabilitiesReport.defaultInterval);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up intervalStep: " + wakeUpIntervalCapabilitiesReport.intervalStep);
+			}
+		}
+	}
 
 }

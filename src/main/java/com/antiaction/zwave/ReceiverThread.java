@@ -18,13 +18,13 @@ public class ReceiverThread implements Runnable {
 
 	protected InputStream in;
 
-	protected GenericQueue<byte[]> queue;
+	protected GenericQueue<byte[]> queueIn;
 
 	protected GenericQueue<byte[]> queueOut;
 
 	public ReceiverThread(InputStream in, GenericQueue<byte[]> queueIn, GenericQueue<byte[]> queueOut) {
 		this.in = in;
-		this.queue = queueIn;
+		this.queueIn = queueIn;
 		this.queueOut = queueOut;
 	}
 
@@ -91,7 +91,7 @@ public class ReceiverThread implements Runnable {
 							System.out.println(dateFormat.format(new Date()) + " Checksum error : " + checksum + " " + frame[frame.length - 1]);
 						}
 						queueOut.insert(Constants.ackMsg);
-						queue.insert(frame);
+						queueIn.insert(frame);
 						state = S_TYPE;
 					}
 					break;

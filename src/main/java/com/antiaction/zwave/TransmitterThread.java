@@ -10,12 +10,14 @@ public class TransmitterThread implements Runnable {
 
 	protected Thread thread;
 
-	protected GenericQueue<byte[]> queue;
+	protected GenericQueue<byte[]> queueOut;
 
 	protected OutputStream out;
 
-	public TransmitterThread(GenericQueue<byte[]> queue, OutputStream out) {
-		this.queue = queue;
+	protected Object ackObj = new Object();
+
+	public TransmitterThread(GenericQueue<byte[]> queueOut, OutputStream out) {
+		this.queueOut = queueOut;
 		this.out = out;
 	}
 
@@ -32,11 +34,17 @@ public class TransmitterThread implements Runnable {
 		byte[] frame = null;
 		try {
 			while (true) {
-				frame = queue.remove();
+				frame = queueOut.remove();
 				// debug
 				System.out.println(dateFormat.format(new Date()) + " < " + HexUtils.hexString(frame));
 				out.write(frame);
 				out.flush();
+				// FIXME
+				/*
+				synchronized (ackObj) {
+					ackObj.wait(1000);
+				}
+				*/
 			}
 		}
 		catch (Throwable t) {
