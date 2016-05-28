@@ -41,6 +41,14 @@ public class Communicator {
 	public void close() {
 	}
 
+	public void sendMessage(byte[] frame) {
+		queueOut.insert(frame);
+	}
+
+	public byte[] recvMessage() {
+		return queueIn.remove();
+	}
+
 	public class TransmitterThread implements Runnable {
 
 		protected Thread thread;
@@ -65,13 +73,15 @@ public class Communicator {
 				while (true) {
 					frame = queueOut.remove();
 					// debug
-					System.out.println(dateFormat.format(new Date()) + " < " + HexUtils.hexString(frame));
+					System.out.println(dateFormat.format(new Date()) + " < " + HexUtils.byteArrayToHexString(frame));
 					out.write(frame);
 					out.flush();
 					// FIXME
+					/*
 					synchronized (ackObj) {
 						ackObj.wait(1000);
 					}
+					*/
 				}
 			}
 			catch (Throwable t) {
@@ -148,7 +158,7 @@ public class Communicator {
 							state = 0;
 							// debug
 							//System.out.println("Packet end: " + packetLen + " " + idx);
-							System.out.println(dateFormat.format(new Date()) + " > " + HexUtils.hexString(frame));
+							System.out.println(dateFormat.format(new Date()) + " > " + HexUtils.byteArrayToHexString(frame));
 							// debug
 							if (checksum != frame[frame.length - 1]) {
 								// debug

@@ -84,7 +84,7 @@ public class ReceiverThread implements Runnable {
 						state = 0;
 						// debug
 						//System.out.println("Packet end: " + packetLen + " " + idx);
-						System.out.println(dateFormat.format(new Date()) + " > " + HexUtils.hexString(frame));
+						System.out.println(dateFormat.format(new Date()) + " > " + HexUtils.byteArrayToHexString(frame));
 						// debug
 						if (checksum != frame[frame.length - 1]) {
 							// debug

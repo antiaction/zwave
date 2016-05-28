@@ -75,7 +75,9 @@ public class SetControllerParamReq {
 
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
-			success = frame[4] & 255;
+			byte[] data = FrameUtils.disassemble(frame);
+			int idx = 0;
+			success = data[idx++] & 255;
 			semaphore.release();
 		}
 

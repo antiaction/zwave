@@ -1,21 +1,18 @@
 package com.antiaction.zwave;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
-import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq;
+import com.antiaction.zwave.messages.GetControllerIdReq;
 import com.antiaction.zwave.messages.GetControllerParamsReq;
 import com.antiaction.zwave.messages.IdentifyNodeReq;
 import com.antiaction.zwave.messages.SendDataReq;
@@ -35,31 +32,18 @@ public class Controller implements Runnable {
 
 	protected SerialTransport transport;
 
-	protected OutputStream out;
-
-	protected InputStream in;
-
-	protected GenericQueue<byte[]> queueIn;
-
-	protected GenericQueue<byte[]> queueOut;
-
-	protected TransmitterThread transmitterThread;
-
-	protected ReceiverThread receiverThread;
+	protected Communicator communicator;
 
 	public Controller() {
+		communicator = new Communicator();
 	}
 
 	public void open(SerialTransport transport) {
-		queueIn = new GenericQueue<byte[]>();
-		queueOut = new GenericQueue<byte[]>();
-		transmitterThread = new TransmitterThread(queueOut, transport.getOutputStream());
-		transmitterThread.start();
-		receiverThread = new ReceiverThread(transport.getInputStream(), queueIn, queueOut);
-		receiverThread.start();
+		communicator.open(transport);
 	}
 
 	public void close() {
+		communicator.close();
 	}
 
 	public void callback(int command, CallbackResponse callbackResponse) {
@@ -74,11 +58,11 @@ public class Controller implements Runnable {
 	}
 
 	public void sendMessage(byte[] frame) {
-		queueOut.insert(frame);
+		communicator.sendMessage(frame);
 	}
 
-	public byte[] receiveRaw() {
-		return queueIn.remove();
+	public GetControllerIdReq getGetControllerIdReq() {
+		return GetControllerIdReq.getInstance(this);
 	}
 
 	public SerialApiGetInitDataReq getSerialApiGetInitData() {
@@ -114,7 +98,7 @@ public class Controller implements Runnable {
 		CallbackResponse callback;
 		boolean bLoop = true;
 		while (bLoop) {
-			frame = queueIn.remove();
+			frame = communicator.recvMessage();
 			command = frame[3] & 255;
 			callback = null;
 			synchronized (callbacks) {
@@ -238,12 +222,12 @@ public class Controller implements Runnable {
 			}
 			else {
 				// debug
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.hexString(data));
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(data));
 			}
 			break;
 		default:
 			// debug
-			System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.hexString(data));
+			System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(data));
 			break;
 		}
 

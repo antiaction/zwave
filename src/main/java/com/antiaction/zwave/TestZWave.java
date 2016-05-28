@@ -14,6 +14,7 @@ import com.antiaction.zwave.constants.GenericDeviceClass;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq.GetCapabilitiesResp;
+import com.antiaction.zwave.messages.GetControllerIdReq.GetControllerIdResp;
 import com.antiaction.zwave.messages.GetControllerParamsReq.GetControllerParamsResp;
 import com.antiaction.zwave.messages.IdentifyNodeReq.IdentifyNodeResp;
 import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
@@ -85,13 +86,19 @@ public class TestZWave implements ApplicationListener {
 
 		Optional<GenericDeviceClass> gdc;
 
+		GetControllerIdResp getGetControllerIdResp = controller.getGetControllerIdReq().build().send();
+		getGetControllerIdResp.waitFor();
+		// debug
+        System.out.println("      homeId: " + HexUtils.byteIntToHexString(getGetControllerIdResp.homeId));
+        System.out.println("controllerId: " + getGetControllerIdResp.controllerId);
+
 		GetCapabilitiesResp getCapabilitiesResp = controller.getGetCapabilitiesReq().build().send();
 		getCapabilitiesResp.waitFor();
 		// debug
         System.out.println("      Version: " + getCapabilitiesResp.majorVersion + "." + getCapabilitiesResp.minorVersion);
-        System.out.println("manufactureId: " + HexUtils.hexString2(getCapabilitiesResp.manufactureId));
-        System.out.println("   deviceType: " + HexUtils.hexString2(getCapabilitiesResp.deviceType));
-        System.out.println("     deviceId: " + HexUtils.hexString2(getCapabilitiesResp.deviceId));
+        System.out.println("manufactureId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.manufactureId));
+        System.out.println("   deviceType: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceType));
+        System.out.println("     deviceId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceId));
 
 		SerialApiGetInitDataResp serialApiGetInitDataResp = controller.getSerialApiGetInitData().build().send();
 		serialApiGetInitDataResp.waitFor();
@@ -103,9 +110,19 @@ public class TestZWave implements ApplicationListener {
 			int nodeId = serialApiGetInitDataResp.registeredDevices.get(i);
 			identifyNodeResp = controller.getIdentifyNode().setNodeId(nodeId).build().send();
 			identifyNodeResp.waitFor();
-			gdc = GenericDeviceClass.getType(identifyNodeResp.type);
 			// debug
-			System.out.println(Constants.INDENT + "Node " + nodeId + " Type: " + gdc.get().getLabel());
+			System.out.println(Constants.INDENT + "Node " + nodeId + "      basicDeviceClass: " + identifyNodeResp.basicDeviceClass.getLabel());
+			System.out.println(Constants.INDENT + "Node " + nodeId + "    genericDeviceClass: " + identifyNodeResp.genericDeviceClass.getLabel());
+			if (identifyNodeResp.optionalSpecificClass.isPresent()) {
+				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: " + identifyNodeResp.optionalSpecificClass.get().getLabel());
+			}
+			else {
+				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: Unknown");
+			}
+			System.out.println(Constants.INDENT + "Node " + nodeId + "           listening: " + identifyNodeResp.listening);
+			System.out.println(Constants.INDENT + "Node " + nodeId + "             routing: " + identifyNodeResp.routing);
+			System.out.println(Constants.INDENT + "Node " + nodeId + "             version: " + identifyNodeResp.version);
+			System.out.println(Constants.INDENT + "Node " + nodeId + " frequentlyListening: " + identifyNodeResp.frequentlyListening);
 		}
 
 		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x01});
@@ -121,7 +138,7 @@ public class TestZWave implements ApplicationListener {
 		while (iter.hasNext()) {
 			parameter = iter.next();
 			// debug
-			System.out.println(Constants.INDENT + HexUtils.hexString(parameter.id)+ " " + parameter.size + " " + HexUtils.hexString(parameter.value) + " / " + HexUtils.byteString(parameter.value));
+			System.out.println(Constants.INDENT + HexUtils.byteToHexString(parameter.id)+ " " + parameter.size + " " + HexUtils.byteArrayToHexString(parameter.value) + " / " + HexUtils.byteString(parameter.value));
 		}
 
 		SendDataResp sendDataResp;
@@ -304,9 +321,9 @@ public class TestZWave implements ApplicationListener {
 			}
 			if (data instanceof ManufacturerSpecific) {
 				ManufacturerSpecific manufacturerSpecificResp = (ManufacturerSpecific)data;
-		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " manufactureId: " + HexUtils.hexString2(manufacturerSpecificResp.manufactureId));
-		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "    deviceType: " + HexUtils.hexString2(manufacturerSpecificResp.deviceType));
-		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "      deviceId: " + HexUtils.hexString2(manufacturerSpecificResp.deviceId));
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " manufactureId: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.manufactureId));
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "    deviceType: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceType));
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "      deviceId: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceId));
 			}
 			if (data instanceof Battery) {
 				Battery batteryResp = (Battery)data;

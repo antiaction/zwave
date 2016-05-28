@@ -36,7 +36,7 @@ public class TransmitterThread implements Runnable {
 			while (true) {
 				frame = queueOut.remove();
 				// debug
-				System.out.println(dateFormat.format(new Date()) + " < " + HexUtils.hexString(frame));
+				System.out.println(dateFormat.format(new Date()) + " < " + HexUtils.byteArrayToHexString(frame));
 				out.write(frame);
 				out.flush();
 				// FIXME
