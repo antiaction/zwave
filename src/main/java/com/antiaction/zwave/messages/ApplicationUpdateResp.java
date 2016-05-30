@@ -23,7 +23,7 @@ public class ApplicationUpdateResp {
 
 	public ApplicationUpdateData data;
 
-    protected ApplicationUpdateResp(Controller controller) {
+	protected ApplicationUpdateResp(Controller controller) {
 		this.controller = controller;
 	}
 

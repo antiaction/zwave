@@ -81,11 +81,11 @@ public enum SpecificDeviceClass {
 		}
 	}
 
-	private int id;
+	protected int id;
 
-	private GenericDeviceClass genericDeviceClass;
+	protected GenericDeviceClass genericDeviceClass;
 
-	private String label;
+	protected String label;
 
 	private SpecificDeviceClass(int id, GenericDeviceClass genericDeviceClass, String label) {
 		this.id = id;

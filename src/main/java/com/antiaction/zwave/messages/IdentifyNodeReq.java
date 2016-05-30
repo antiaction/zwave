@@ -68,19 +68,19 @@ public class IdentifyNodeReq {
 
 		protected byte[] frame;
 
-        public boolean listening;
+		public boolean listening;
 
-        public boolean routing;
+		public boolean routing;
 
-        public int version;
+		public int version;
 
-        public boolean frequentlyListening;
+		public boolean frequentlyListening;
 
-        public BasicDeviceClass basicDeviceClass;
+		public BasicDeviceClass basicDeviceClass;
 
-        public GenericDeviceClass genericDeviceClass;
+		public GenericDeviceClass genericDeviceClass;
 
-        public Optional<SpecificDeviceClass> optionalSpecificClass;
+		public Optional<SpecificDeviceClass> optionalSpecificClass;
 
 		protected IdentifyNodeResp(Controller controller) {
 			this.controller = controller;
@@ -93,14 +93,14 @@ public class IdentifyNodeReq {
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);
-	        listening = (data[0] & 0x80) != 0;
-	        routing = (data[0] & 0x40) != 0;
-	        version = (data[0] & 0x07) + 1;
-	        frequentlyListening = (data[1] & 0x60) != 0;
+			listening = (data[0] & 0x80) != 0;
+			routing = (data[0] & 0x40) != 0;
+			version = (data[0] & 0x07) + 1;
+			frequentlyListening = (data[1] & 0x60) != 0;
 			int idx = 3;
-	        basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
-	        genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
-	        optionalSpecificClass = SpecificDeviceClass.getType(genericDeviceClass, data[idx++] & 255);
+			basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
+			genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
+			optionalSpecificClass = SpecificDeviceClass.getType(genericDeviceClass, data[idx++] & 255);
 			semaphore.release();
 		}
 

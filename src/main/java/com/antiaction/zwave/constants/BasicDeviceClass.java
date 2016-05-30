@@ -23,8 +23,8 @@ public enum BasicDeviceClass {
 		}
 	}
 
-	private int id;
-	private String label;
+	protected int id;
+	protected String label;
 
 	private BasicDeviceClass(int id, String label) {
 		this.id = id;

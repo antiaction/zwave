@@ -28,9 +28,9 @@ public class TransmitterThread implements Runnable {
 
 	@Override
 	public void run() {
-        DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
-        dateFormat.setLenient(false);
-        dateFormat.setTimeZone(TimeZone.getDefault());
+		DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
+		dateFormat.setLenient(false);
+		dateFormat.setTimeZone(TimeZone.getDefault());
 		byte[] frame = null;
 		try {
 			while (true) {

@@ -35,9 +35,9 @@ public class ReceiverThread implements Runnable {
 
 	@Override
 	public void run() {
-        DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
-        dateFormat.setLenient(false);
-        dateFormat.setTimeZone(TimeZone.getDefault());
+		DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
+		dateFormat.setLenient(false);
+		dateFormat.setTimeZone(TimeZone.getDefault());
 		int state = S_TYPE;
 		int c;
 		int idx = 0;

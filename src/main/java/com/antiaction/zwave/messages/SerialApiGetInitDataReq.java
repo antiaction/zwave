@@ -58,9 +58,9 @@ public class SerialApiGetInitDataReq {
 
 		protected byte[] frame;
 
-        public ControllerMode controllerMode;
+		public ControllerMode controllerMode;
 
-        public ControllerType controllerType;
+		public ControllerType controllerType;
 
 		public List<Integer> registeredDevices;
 

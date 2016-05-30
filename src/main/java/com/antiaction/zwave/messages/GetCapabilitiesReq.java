@@ -63,15 +63,15 @@ public class GetCapabilitiesReq {
 
 		public int manufactureId;
 
-        public int deviceType;
+		public int deviceType;
 
-        public int deviceId;
+		public int deviceId;
 
-        public Set<Integer> commandSet;
+		public Set<Integer> commandSet;
 
-        public List<Integer> commandList;
+		public List<Integer> commandList;
 
-        protected GetCapabilitiesResp(Controller controller) {
+		protected GetCapabilitiesResp(Controller controller) {
 			this.controller = controller;
 		}
 
@@ -85,11 +85,11 @@ public class GetCapabilitiesReq {
 			int idx = 0;
 			majorVersion = data[idx++] & 255;
 			minorVersion = data[idx++] & 255;
-	        manufactureId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
-	        deviceType = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
-	        deviceId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
-	        commandSet = new TreeSet<>();
-	        commandList = new LinkedList<>();
+			manufactureId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
+			deviceType = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
+			deviceId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
+			commandSet = new TreeSet<>();
+			commandList = new LinkedList<>();
 			int bits;
 			int bit = 1;
 			//Optional<CommandClass> commandClass;

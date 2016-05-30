@@ -17,18 +17,18 @@ public class BatteryCommand {
 	protected BatteryCommand() {
 	}
 
-    private static final byte[] BATTERY_REQ;
+	private static final byte[] BATTERY_REQ;
 
-    static {
-    	BATTERY_REQ = new byte[] {
-    			(byte)COMMAND_CLASS,
-    			BATTERY_GET
-    	};
-    }
+	static {
+		BATTERY_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)BATTERY_GET
+		};
+	}
 
-    public static byte[] assembleBatteryReq() {
-    	return BATTERY_REQ;
-    }
+	public static byte[] assembleBatteryReq() {
+		return BATTERY_REQ;
+	}
 
 	public static Battery disassemble(byte[] data) {
 		if (data.length >= 2) {

@@ -20,11 +20,9 @@ import com.antiaction.zwave.messages.SerialApiGetInitDataReq;
 import com.antiaction.zwave.messages.SetControllerParamReq;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.command.BasicCommand;
-import com.antiaction.zwave.messages.command.BasicCommand.Basic;
 import com.antiaction.zwave.messages.command.BatteryCommand;
-import com.antiaction.zwave.messages.command.BatteryCommand.Battery;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
+import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.WakeUpCommand;
 import com.antiaction.zwave.transport.SerialTransport;
 
@@ -134,22 +132,22 @@ public class Controller implements Runnable {
 	/** Set of registered listeners. */
 	private Set<ApplicationListener> listenerSet = new HashSet<ApplicationListener>();
 
-    /**
-     * Adds a listener to the list that is notified each time a change
-     * to the data model occurs.
-     * @param l	the ApplicationListener
-     */
+	/**
+	 * Adds a listener to the list that is notified each time a change
+	 * to the data model occurs.
+	 * @param l	the ApplicationListener
+	 */
 	public void addListener(ApplicationListener l) {
 		synchronized ( listenerSet ) {
 			listenerSet.add( l );
 		}
 	}
 
-    /**
-     * Removes a listener from the list that is notified each time a
-     * change to the data model occurs.
-     * @param l the ApplicationListener
-     */
+	/**
+	 * Removes a listener from the list that is notified each time a
+	 * change to the data model occurs.
+	 * @param l the ApplicationListener
+	 */
 	public void removeListener(ApplicationListener l) {
 		synchronized ( listenerSet ) {
 			listenerSet.remove( l );
@@ -182,48 +180,29 @@ public class Controller implements Runnable {
 		//System.out.println("ApplicationCommandHandlerResp nodeId: " + applicationCommandHandlerResp.nodeId + " CommandClass: " + commandClassStr );
 
 		byte[] data = applicationCommandHandlerResp.payload;
+		ApplicationCommandHandlerData achData;
 
 		// CommandClass.
 		switch (data[0]) {
 		case (byte)0x20:
-			Basic basicResp = BasicCommand.disassemble(data);
-			applicationCommandHandlerResp.data = basicResp;
-			break;
-		case (byte)0x72:
-			ManufacturerSpecific manufacturerSpecificResp = ManufacturerSpecificCommand.disassemble(data);
-			applicationCommandHandlerResp.data = manufacturerSpecificResp;
-			break;
-		case (byte)0x80:
-			Battery battery = BatteryCommand.disassemble(data);
-			applicationCommandHandlerResp.data = battery;
-			break;
-		case (byte)0x84:
-			ApplicationCommandHandlerData achData = WakeUpCommand.disassemble(data);
+			achData = BasicCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
-		case 0x31:
-			if (data[1] == 0x05 && data[2] == 0x01) {
-				Float temp = new Float(data[4] & 255);
-				switch (data[3]) {
-				case 1:
-    	               temp = ((temp - 170.0f) / 10.0f) + 41.1f;
-					break;
-				case 2:
-    	               temp = ((temp - 170.0f) / 10.0f) + 68.2f;
-					break;
-				case 3:
-    	               temp = ((temp - 25.0f) / 10.0f) + 79.3f;
-					break;
-				}
-				Float temp2 = (temp -32) * 5.0f / 9.0f;
-
-				// debug
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " temperature: " + temp + "F / " + temp2 + "C");
-			}
-			else {
-				// debug
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(data));
-			}
+		case (byte)0x72:
+			achData = ManufacturerSpecificCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x80:
+			achData = BatteryCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x84:
+			achData = WakeUpCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x31:
+			achData = SensorMultiLevelCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
 			break;
 		default:
 			// debug

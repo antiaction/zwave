@@ -24,45 +24,58 @@ public class WakeUpCommand {
 	protected WakeUpCommand() {
 	}
 
-    public static byte[] assembleWakeUpIntervalSetReq(int interval, int scale) {
-    	byte[] data = {
-    			(byte)COMMAND_CLASS,
-    			(byte)WAKE_UP_INTERVAL_SET,
-    			(byte)((interval >> 16) & 255),
-    			(byte)((interval >> 8) & 255),
-    			(byte)(interval & 255),
-    			(byte)(scale & 255)
-    	};
-    	return data;
-    }
+	public static byte[] assembleWakeUpIntervalSetReq(int interval, int scale) {
+		byte[] data = {
+				(byte)COMMAND_CLASS,
+				(byte)WAKE_UP_INTERVAL_SET,
+				(byte)((interval >> 16) & 255),
+				(byte)((interval >> 8) & 255),
+				(byte)(interval & 255),
+				(byte)(scale & 255)
+		};
+		return data;
+	}
 
 	private static final byte[] WAKE_UP_INTERVAL_GET_REQ;
 
-    static {
-    	WAKE_UP_INTERVAL_GET_REQ = new byte[] {
-    			(byte)COMMAND_CLASS,
-    			WAKE_UP_INTERVAL_GET
-    	};
-    }
+	static {
+		WAKE_UP_INTERVAL_GET_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)WAKE_UP_INTERVAL_GET
+		};
+	}
 
-    public static byte[] assembleWakeUpIntervalGetReq() {
-    	return WAKE_UP_INTERVAL_GET_REQ;
-    }
+	public static byte[] assembleWakeUpIntervalGetReq() {
+		return WAKE_UP_INTERVAL_GET_REQ;
+	}
 
-    private static final byte[] WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ;
+	private static final byte[] WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ;
 
-    static {
-    	WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ = new byte[] {
-    			(byte)COMMAND_CLASS,
-    			WAKE_UP_INTERVAL_CAPABILITIES_GET
-    	};
-    }
+	static {
+		WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)WAKE_UP_INTERVAL_CAPABILITIES_GET
+		};
+	}
 
-    public static byte[] assembleWakeUpIntervalCapabilitiesGetReq() {
-    	return WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ;
-    }
+	public static byte[] assembleWakeUpIntervalCapabilitiesGetReq() {
+		return WAKE_UP_INTERVAL_CAPABILITIES_GET_REQ;
+	}
 
-    public static ApplicationCommandHandlerData disassemble(byte[] data) {
+	private static final byte[] WAKE_UP_NO_MORE_INFORMATION_REQ;
+
+	static {
+		WAKE_UP_NO_MORE_INFORMATION_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)WAKE_UP_NO_MORE_INFORMATION
+		};
+	}
+
+	public static byte[] assembleWakeUpNoMoreInformationReq() {
+		return WAKE_UP_NO_MORE_INFORMATION_REQ;
+	}
+
+	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;
@@ -92,7 +105,7 @@ public class WakeUpCommand {
 				}
 			}
 		}
-        return null;
+		return null;
 	}
 
 	public static class WakeUpNotification extends ApplicationCommandHandlerData {
@@ -104,10 +117,10 @@ public class WakeUpCommand {
 	}
 
 	public static class WakeUpIntervalCapabilitiesReport extends ApplicationCommandHandlerData {
-        public int minInterval;
-        public int maxInterval;
-        public int defaultInterval;
-        public int intervalStep;
+		public int minInterval;
+		public int maxInterval;
+		public int defaultInterval;
+		public int intervalStep;
 	}
 
 }

@@ -59,7 +59,7 @@ public class GetControllerIdReq {
 
 		public int controllerId;
 
-        protected GetControllerIdResp(Controller controller) {
+		protected GetControllerIdResp(Controller controller) {
 			this.controller = controller;
 		}
 
@@ -71,8 +71,8 @@ public class GetControllerIdReq {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);
 			int idx = 0;
-	        homeId = ((data[idx++] & 255) << 24) | ((data[idx++] & 255) << 16) | ((data[idx++] & 255) << 8) | (data[idx++] & 255);
-	        controllerId = data[idx++] & 255;
+			homeId = ((data[idx++] & 255) << 24) | ((data[idx++] & 255) << 16) | ((data[idx++] & 255) << 8) | (data[idx++] & 255);
+			controllerId = data[idx++] & 255;
 			semaphore.release();
 		}
 

@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.GenericDeviceClass;
+import com.antiaction.zwave.constants.SensorType;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq.GetCapabilitiesResp;
@@ -21,13 +22,12 @@ import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
-import com.antiaction.zwave.messages.command.BasicCommand;
 import com.antiaction.zwave.messages.command.BasicCommand.Basic;
-import com.antiaction.zwave.messages.command.BatteryCommand;
 import com.antiaction.zwave.messages.command.BatteryCommand.Battery;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
-import com.antiaction.zwave.messages.command.WakeUpCommand;
+import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
+import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelReport;
+import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelSupportedReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalCapabilitiesReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpNotification;
@@ -89,16 +89,16 @@ public class TestZWave implements ApplicationListener {
 		GetControllerIdResp getGetControllerIdResp = controller.getGetControllerIdReq().build().send();
 		getGetControllerIdResp.waitFor();
 		// debug
-        System.out.println("      homeId: " + HexUtils.byteIntToHexString(getGetControllerIdResp.homeId));
-        System.out.println("controllerId: " + getGetControllerIdResp.controllerId);
+		System.out.println("      homeId: " + HexUtils.byteIntToHexString(getGetControllerIdResp.homeId));
+		System.out.println("controllerId: " + getGetControllerIdResp.controllerId);
 
 		GetCapabilitiesResp getCapabilitiesResp = controller.getGetCapabilitiesReq().build().send();
 		getCapabilitiesResp.waitFor();
 		// debug
-        System.out.println("      Version: " + getCapabilitiesResp.majorVersion + "." + getCapabilitiesResp.minorVersion);
-        System.out.println("manufactureId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.manufactureId));
-        System.out.println("   deviceType: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceType));
-        System.out.println("     deviceId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceId));
+		System.out.println("      Version: " + getCapabilitiesResp.majorVersion + "." + getCapabilitiesResp.minorVersion);
+		System.out.println("manufactureId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.manufactureId));
+		System.out.println("   deviceType: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceType));
+		System.out.println("     deviceId: " + HexUtils.byteCharToHexString(getCapabilitiesResp.deviceId));
 
 		SerialApiGetInitDataResp serialApiGetInitDataResp = controller.getSerialApiGetInitData().build().send();
 		serialApiGetInitDataResp.waitFor();
@@ -187,7 +187,7 @@ public class TestZWave implements ApplicationListener {
 		}
 		catch (InterruptedException e) {
 		}
-
+/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
@@ -291,6 +291,55 @@ public class TestZWave implements ApplicationListener {
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
+*/
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelSupportedGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x01)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x03)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x05)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+		}
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x1B)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
 
 		try {
 			Thread.sleep(24 * 60 * 60 * 1000);
@@ -318,6 +367,19 @@ public class TestZWave implements ApplicationListener {
 			if (data instanceof Basic) {
 				Basic basicResp = (Basic)data;
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic value: " + basicResp.value);
+			}
+			if (data instanceof SensorMultiLevelSupportedReport) {
+				SensorMultiLevelSupportedReport sensorMultiLevelSupportedReport = (SensorMultiLevelSupportedReport)data;
+				Iterator<SensorType> sensorTypesIter = sensorMultiLevelSupportedReport.supportedSensorTypeList.iterator();
+				SensorType sensorType;
+				while (sensorTypesIter.hasNext()) {
+					sensorType = sensorTypesIter.next();
+					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorType.getId()) + ")");
+				}
+			}
+			if (data instanceof SensorMultiLevelReport) {
+				SensorMultiLevelReport sensorMultiLevelReport = (SensorMultiLevelReport)data;
+		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorMultiLevelReport.sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorMultiLevelReport.sensorType.getId()) + ") = " + sensorMultiLevelReport.value.toPlainString());
 			}
 			if (data instanceof ManufacturerSpecific) {
 				ManufacturerSpecific manufacturerSpecificResp = (ManufacturerSpecific)data;

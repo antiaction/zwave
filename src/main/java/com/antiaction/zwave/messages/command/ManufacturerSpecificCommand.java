@@ -15,25 +15,25 @@ public class ManufacturerSpecificCommand {
 	private static final int COMMAND_CLASS = CommandClass.MANUFACTURER_SPECIFIC.getClassCode() & 255;
 
 	private static final int MANUFACTURER_SPECIFIC_GET = 0x04;
-    private static final int MANUFACTURER_SPECIFIC_REPORT = 0x05;
+	private static final int MANUFACTURER_SPECIFIC_REPORT = 0x05;
 
-    protected ManufacturerSpecificCommand() {
-    }
+	protected ManufacturerSpecificCommand() {
+	}
 
-    private static final byte[] MANUFACTURER_SPECIFIC_GET_REQ;
+	private static final byte[] MANUFACTURER_SPECIFIC_GET_REQ;
 
-    static {
-    	MANUFACTURER_SPECIFIC_GET_REQ = new byte[] {
-    			(byte)COMMAND_CLASS,
-    			MANUFACTURER_SPECIFIC_GET
-    	};
-    }
+	static {
+		MANUFACTURER_SPECIFIC_GET_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)MANUFACTURER_SPECIFIC_GET
+		};
+	}
 
-    public static byte[] getManufacturerSpecificGetReq() {
-    	return MANUFACTURER_SPECIFIC_GET_REQ;
-    }
+	public static byte[] getManufacturerSpecificGetReq() {
+		return MANUFACTURER_SPECIFIC_GET_REQ;
+	}
 
-    public static ManufacturerSpecific disassemble(byte[] data) {
+	public static ManufacturerSpecific disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;
@@ -45,20 +45,20 @@ public class ManufacturerSpecificCommand {
 					manufacturerSpecific.manufactureId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
 					manufacturerSpecific.deviceType = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
 					manufacturerSpecific.deviceId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
-			        return manufacturerSpecific;
+					return manufacturerSpecific;
 				case MANUFACTURER_SPECIFIC_GET:
 				default:
 					break;
 				}
 			}
 		}
-        return null;
+		return null;
 	}
 
-    public static class ManufacturerSpecific extends ApplicationCommandHandlerData {
-    	public int manufactureId;
-        public int deviceType;
-        public int deviceId;
-    }
+	public static class ManufacturerSpecific extends ApplicationCommandHandlerData {
+		public int manufactureId;
+		public int deviceType;
+		public int deviceId;
+	}
 
 }

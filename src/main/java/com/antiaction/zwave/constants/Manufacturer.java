@@ -9,7 +9,7 @@ public class Manufacturer {
 
 	public String name;
 
-    public String website;
+	public String website;
 
 	protected static final Object[][] manufacturersArr = new Object[][] {
 		{0x0001, "ACT"},

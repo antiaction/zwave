@@ -15,23 +15,23 @@ public class BasicCommand {
 	private static final int BASIC_GET = 0x02;
 	private static final int BASIC_REPORT = 0x03;
 
-    protected BasicCommand() {
+	protected BasicCommand() {
 	}
 
-    private static final byte[] BASIC_REQ;
+	private static final byte[] BASIC_REQ;
 
-    static {
-    	BASIC_REQ = new byte[] {
-    			(byte)COMMAND_CLASS,
-    			BASIC_GET
-    	};
-    }
+	static {
+		BASIC_REQ = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)BASIC_GET
+		};
+	}
 
-    public static byte[] assembleBasicReq() {
-    	return BASIC_REQ;
-    }
+	public static byte[] assembleBasicReq() {
+		return BASIC_REQ;
+	}
 
-    public static Basic disassemble(byte[] data) {
+	public static Basic disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;
@@ -42,17 +42,17 @@ public class BasicCommand {
 				case BASIC_REPORT:
 					Basic basic = new Basic();
 					basic.value = data[idx++] & 255;
-			        return basic;
+					return basic;
 				case BASIC_GET:
 				default:
 					break;
 				}
 			}
 		}
-        return null;
+		return null;
 	}
 
-    public static class Basic extends ApplicationCommandHandlerData {
+	public static class Basic extends ApplicationCommandHandlerData {
 		public int value;
 	}
 

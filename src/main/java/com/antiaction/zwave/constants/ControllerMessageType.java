@@ -10,7 +10,7 @@ public enum ControllerMessageType {
 	ApplicationCommandHandler(0x04,"ApplicationCommandHandler"),						// Handle application command
 	GetControllerCapabilities(0x05,"GetControllerCapabilities"),						// Request controller capabilities (primary role, SUC/SIS availability)
 	SerialApiSetTimeouts(0x06,"SerialApiSetTimeouts"),									// Set Serial API timeouts
-	GetCapabilities(0x07,"GetCapabilities"),							                // Request Serial API capabilities from the controller
+	GetCapabilities(0x07,"GetCapabilities"),											// Request Serial API capabilities from the controller
 	SerialApiSoftReset(0x08,"SerialApiSoftReset"),										// Soft reset. Restarts Z-Wave chip
 	RfReceiveMode(0x10,"RfReceiveMode"),												// Power down the RF section of the stick
 	SetSleepMode(0x11,"SetSleepMode"),													// Set the CPU into sleep mode
@@ -27,9 +27,9 @@ public enum ControllerMessageType {
 	MemoryPutByte(0x22, "MemoryPutByte"),
 	ReadMemory(0x23,"ReadMemory"),														// Read memory.
 	WriteMemory(0x24, "WriteMemory"),
-	SetLearnNodeState(0x40,"SetLearnNodeState"),    									// ???
-	IdentifyNode(0x41,"IdentifyNode"),    												// Get protocol info (baud rate, listening, etc.) for a given node
-	SetDefault(0x42,"SetDefault"),    													// Reset controller and node info to default (original) values
+	SetLearnNodeState(0x40,"SetLearnNodeState"),										// ???
+	IdentifyNode(0x41,"IdentifyNode"),													// Get protocol info (baud rate, listening, etc.) for a given node
+	SetDefault(0x42,"SetDefault"),														// Reset controller and node info to default (original) values
 	NewController(0x43,"NewController"),												// ???
 	ReplicationCommandComplete(0x44,"ReplicationCommandComplete"),						// Replication send data complete
 	ReplicationSendData(0x45,"ReplicationSendData"),									// Replication send data
@@ -40,7 +40,7 @@ public enum ControllerMessageType {
 	AddNodeToNetwork(0x4a,"AddNodeToNetwork"),											// Control the addnode (or addcontroller) process...start, stop, etc.
 	RemoveNodeFromNetwork(0x4b,"RemoveNodeFromNetwork"),								// Control the removenode (or removecontroller) process...start, stop, etc.
 	CreateNewPrimary(0x4c,"CreateNewPrimary"),											// Control the createnewprimary process...start, stop, etc.
-	ControllerChange(0x4d,"ControllerChange"),    										// Control the transferprimary process...start, stop, etc.
+	ControllerChange(0x4d,"ControllerChange"),											// Control the transferprimary process...start, stop, etc.
 	SetLearnMode(0x50,"SetLearnMode"),													// Put a controller into learn mode for replication/ receipt of configuration info
 	AssignSucReturnRoute(0x51,"AssignSucReturnRoute"),									// Assign a return route to the SUC
 	EnableSuc(0x52,"EnableSuc"),														// Make a controller a Static Update Controller
