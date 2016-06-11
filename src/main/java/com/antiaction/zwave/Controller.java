@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq;
@@ -28,12 +27,19 @@ import com.antiaction.zwave.transport.SerialTransport;
 
 public class Controller implements Runnable {
 
+	protected Thread thread;
+
 	protected SerialTransport transport;
 
 	protected Communicator communicator;
 
 	public Controller() {
 		communicator = new Communicator();
+	}
+
+	public void start() {
+		thread = new Thread(this, this.getClass().getSimpleName());
+		thread.start();
 	}
 
 	public void open(SerialTransport transport) {
@@ -122,6 +128,8 @@ public class Controller implements Runnable {
 					applicationCommandHandlerResp.disassemble(frame);
 					onApplicationCommandHandler(applicationCommandHandlerResp);
 					break;
+				default:
+					break;
 				}
 				// debug
 				//System.out.println(pkt.length);
@@ -205,8 +213,8 @@ public class Controller implements Runnable {
 			applicationCommandHandlerResp.data = achData;
 			break;
 		default:
-			// debug
-			System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(data));
+			achData = new UnknownApplicationCommandHandlerData(data);
+			applicationCommandHandlerResp.data = achData;
 			break;
 		}
 
@@ -215,6 +223,13 @@ public class Controller implements Runnable {
 			while ( listeners.hasNext() ) {
 				listeners.next().onApplicationCommandHandler(applicationCommandHandlerResp);
 			}
+		}
+	}
+
+	public static class UnknownApplicationCommandHandlerData extends ApplicationCommandHandlerData {
+		public byte[] data;
+		public UnknownApplicationCommandHandlerData(byte[] data) {
+			this.data = data;
 		}
 	}
 

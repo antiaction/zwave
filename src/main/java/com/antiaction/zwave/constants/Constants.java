@@ -18,7 +18,7 @@ public class Constants {
 	 */
 	int SWITCH_BINARY_SET = 0x01; //set a value
 
-	public static final String INDENT = "                                  ";
+	public static final String INDENT = "                                   ";
 
 	public static final int PKT_IDX_PACKET_TYPE = 0;
 	public static final int PKT_IDX_PACKET_LEN = 1;

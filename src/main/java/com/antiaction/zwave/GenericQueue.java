@@ -52,4 +52,18 @@ public class GenericQueue<T> {
 		return obj;
 	}
 
+	public int items() {
+		boolean bAquired = false;
+		while (!bAquired) {
+			try {
+				bAquired = lock.tryAcquire(1, TimeUnit.SECONDS);
+			}
+			catch (InterruptedException e) {
+			}
+		}
+		int items = objects.size();
+		lock.release();
+		return items;
+	}
+
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
 
+import com.antiaction.zwave.Controller.UnknownApplicationCommandHandlerData;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.GenericDeviceClass;
 import com.antiaction.zwave.constants.SensorType;
@@ -22,12 +23,17 @@ import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
+import com.antiaction.zwave.messages.command.BasicCommand;
 import com.antiaction.zwave.messages.command.BasicCommand.Basic;
+import com.antiaction.zwave.messages.command.BatteryCommand;
 import com.antiaction.zwave.messages.command.BatteryCommand.Battery;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelReport;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelSupportedReport;
+import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
+import com.antiaction.zwave.messages.command.WakeUpCommand;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalCapabilitiesReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpNotification;
@@ -55,9 +61,6 @@ public class TestZWave implements ApplicationListener {
 
 		IdentifyNodeResp identifyNodeResp;
 
-		byte[] data;
-		byte[] frame;
-
 		try {
 			transport.open(portName);
 			controller.open(transport);
@@ -79,10 +82,8 @@ public class TestZWave implements ApplicationListener {
 			System.exit(1);
 		}
 
-		Thread t = new Thread(controller);
-		t.start();
-
 		controller.addListener(this);
+		controller.start();
 
 		Optional<GenericDeviceClass> gdc;
 
@@ -143,11 +144,15 @@ public class TestZWave implements ApplicationListener {
 
 		SendDataResp sendDataResp;
 
+		sleep(10000);
+
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		sleep(10000);
 
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
@@ -155,11 +160,15 @@ public class TestZWave implements ApplicationListener {
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
+		sleep(10000);
+
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
 		sendDataResp = controller.getSendDataReq().setNodeId(20).setParameter(parameter).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		sleep(10000);
 
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
 		sendDataResp = controller.getSendDataReq().setNodeId(20).setParameter(parameter).build().send();
@@ -167,176 +176,114 @@ public class TestZWave implements ApplicationListener {
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		//01 0D 00 13 0C 06 84 04 00 01 68 01 05 03 05
+		sleep(10000);
 
-		//parameter = new Parameter((byte)CommandClass.MANUFACTURER_SPECIFIC.getClassCode(), new byte[] {(byte)MANUFACTURER_SPECIFIC_GET});
-		//success = controller.sendData(2, parameter);
-
-		/*
-		data = new byte[] {
-				(byte)ControllerMessageType.GetCapabilities	.getId(),
-				(byte)0x02
-		};
-		frame = FrameUtils.assemble(MessageType.Request, data);
-		controller.sendRaw(frame);
-		controller.receiveRaw();
-		*/
-
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
-/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
-
+		sleep(10000);
+		
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BatteryCommand.assembleBatteryReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BatteryCommand.assembleBatteryReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BasicCommand.assembleBasicReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BasicCommand.assembleBasicReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-*/
+
+		sleep(10000);
+
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelSupportedGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x01)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x03)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x05)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 
-		try {
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
-		}
+		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x1B)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		sleep(10000);
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(ThermostatSetpointCommand.assembleThermostatSetpointSupportedGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
@@ -352,6 +299,14 @@ public class TestZWave implements ApplicationListener {
 		controller.close();
 
 		transport.close();
+	}
+
+	public static void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
+		}
+		catch (InterruptedException e) {
+		}
 	}
 
 	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
@@ -404,6 +359,10 @@ public class TestZWave implements ApplicationListener {
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up maxInterval: " + wakeUpIntervalCapabilitiesReport.maxInterval);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up defaultInterval: " + wakeUpIntervalCapabilitiesReport.defaultInterval);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up intervalStep: " + wakeUpIntervalCapabilitiesReport.intervalStep);
+			}
+			if (data instanceof UnknownApplicationCommandHandlerData) {
+				UnknownApplicationCommandHandlerData unknownApplicationCommandHandlerData = (UnknownApplicationCommandHandlerData)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(unknownApplicationCommandHandlerData.data));
 			}
 		}
 	}
