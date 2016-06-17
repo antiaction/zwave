@@ -19,7 +19,7 @@ public class Communicator {
 
 	protected GenericQueue<byte[]> queueIn;
 
-	protected GenericQueue<byte[]> queueOut;
+	protected GenericQueue<Request> queueOut;
 
 	protected TransmitterThread transmitterThread;
 
@@ -32,7 +32,7 @@ public class Communicator {
 		out = transport.getOutputStream();
 		in = transport.getInputStream();
 		queueIn = new GenericQueue<byte[]>();
-		queueOut = new GenericQueue<byte[]>();
+		queueOut = new GenericQueue<Request>();
 		transmitterThread = new TransmitterThread();
 		transmitterThread.start();
 		receiverThread = new ReceiverThread();
@@ -42,8 +42,8 @@ public class Communicator {
 	public void close() {
 	}
 
-	public void sendMessage(byte[] frame) {
-		queueOut.insert(frame);
+	public void sendMessage(Request req) {
+		queueOut.insert(req);
 		signal.bfSignal(BF_SEND_MESSAGE);
 	}
 
@@ -79,7 +79,8 @@ public class Communicator {
 			DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
 			dateFormat.setLenient(false);
 			dateFormat.setTimeZone(TimeZone.getDefault());
-			byte[] frame = null;
+			Request req;
+			byte[] frame;
 			int bfSignal;
 			int state = S_TRABSMIT_SEBD;
 			try {
@@ -93,7 +94,8 @@ public class Communicator {
 							out.flush();
 						}
 						if (queueOut.items() > 0) {
-							frame = queueOut.remove();
+							req = queueOut.remove();
+							frame = req.getFrame();
 							// debug
 							System.out.println(dateFormat.format(new Date()) + " <  " + HexUtils.byteArrayToHexString(frame));
 							out.write(frame);
@@ -111,7 +113,8 @@ public class Communicator {
 							}
 							if ((bfSignal & BF_SEND_MESSAGE) != 0) {
 								if (queueOut.items() > 0) {
-									frame = queueOut.remove();
+									req = queueOut.remove();
+									frame = req.getFrame();
 									// debug
 									System.out.println(dateFormat.format(new Date()) + " <  " + HexUtils.byteArrayToHexString(frame));
 									out.write(frame);

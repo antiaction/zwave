@@ -1,5 +1,7 @@
 package com.antiaction.zwave;
 
-public class Request {
+public abstract class Request {
+
+	public abstract byte[] getFrame();
 
 }

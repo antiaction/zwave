@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -13,7 +14,9 @@ import com.antiaction.zwave.constants.MessageType;
  * > 0x01 0x08 0x01 0x20 0xF1 0xB7 0x9F 0x87 0x01 0x89
  * @author nicl
  */
-public class GetControllerIdReq {
+public class GetControllerIdReq extends Request {
+
+	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.MemoryGetId.getId() & 255;
 
 	protected Controller controller;
 
@@ -31,7 +34,7 @@ public class GetControllerIdReq {
 
 	public GetControllerIdReq build() {
 		byte[] data = new byte[] {
-				(byte)ControllerMessageType.MemoryGetId.getId()
+				(byte)CONTROLLER_MESSAGE_TYPE
 		};
 		frame = FrameUtils.assemble(MessageType.Request, data );
 		return this;
@@ -43,8 +46,16 @@ public class GetControllerIdReq {
 		}
 		GetControllerIdResp resp = GetControllerIdResp.getInstance(controller);
 		controller.callback(0x20, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class GetControllerIdResp implements CallbackResponse {

@@ -61,8 +61,8 @@ public class Controller implements Runnable {
 		}
 	}
 
-	public void sendMessage(byte[] frame) {
-		communicator.sendMessage(frame);
+	public void sendMessage(Request req) {
+		communicator.sendMessage(req);
 	}
 
 	public GetControllerIdReq getGetControllerIdReq() {

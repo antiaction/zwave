@@ -7,6 +7,7 @@ import java.util.concurrent.Semaphore;
 import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.ControllerMode;
@@ -18,7 +19,9 @@ import com.antiaction.zwave.constants.MessageType;
  * Resp: 0x01 0x25 0x01 0x02 0x05 0x00 0x1D 0x07 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x05 0x00 0xC3
  * @author nicl
  */
-public class SerialApiGetInitDataReq {
+public class SerialApiGetInitDataReq extends Request {
+
+	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.SerialApiGetInitData.getId() & 255;
 
 	protected Controller controller;
 
@@ -34,7 +37,7 @@ public class SerialApiGetInitDataReq {
 
 	public SerialApiGetInitDataReq build() {
 		byte[] data = new byte[] {
-				(byte)ControllerMessageType.SerialApiGetInitData.getId()
+				(byte)CONTROLLER_MESSAGE_TYPE
 		};
 		frame = FrameUtils.assemble(MessageType.Request, data );
 		return this;
@@ -46,8 +49,16 @@ public class SerialApiGetInitDataReq {
 		}
 		SerialApiGetInitDataResp resp = SerialApiGetInitDataResp.getInstance(controller);
 		controller.callback(0x02, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class SerialApiGetInitDataResp implements CallbackResponse {

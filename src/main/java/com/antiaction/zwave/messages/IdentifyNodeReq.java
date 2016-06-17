@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.BasicDeviceClass;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.GenericDeviceClass;
@@ -17,7 +18,9 @@ import com.antiaction.zwave.constants.SpecificDeviceClass;
  * Resp: 0x01 0x09 0x01 0x41 0x93 0x16 0x01 0x02 0x02 0x01 0x33
  * @author nicl
  */
-public class IdentifyNodeReq {
+public class IdentifyNodeReq extends Request {
+
+	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.IdentifyNode.getId() & 255;
 
 	protected Controller controller;
 
@@ -43,7 +46,7 @@ public class IdentifyNodeReq {
 			throw new IllegalStateException("nodeId not set!");
 		}
 		byte[] data = new byte[] {
-				(byte)ControllerMessageType.IdentifyNode.getId(),
+				(byte)CONTROLLER_MESSAGE_TYPE,
 				(byte)nodeId.intValue()
 		};
 		frame = FrameUtils.assemble(MessageType.Request, data );
@@ -56,8 +59,16 @@ public class IdentifyNodeReq {
 		}
 		IdentifyNodeResp resp = IdentifyNodeResp.getInstance(controller);
 		controller.callback(0x41, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class IdentifyNodeResp implements CallbackResponse {

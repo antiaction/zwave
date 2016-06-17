@@ -6,6 +6,7 @@ import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Parameter;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.MessageType;
 
 /**
@@ -13,9 +14,10 @@ import com.antiaction.zwave.constants.MessageType;
  * Resp: 0x01 0x04 0x01 0xF2 0x01 0x09
  * @author nicl
  */
-public class SetControllerParamReq {
+public class SetControllerParamReq extends Request {
 
-	private static final byte[] SET_HEADER = {(byte)0xF2};
+	private static final int CONTROLLER_MESSAGE_TYPE = 0xF2 & 255;
+
 	private static final byte[] SET_FOOTER = {(byte)0x05, (byte)0x01};
 
 	protected Controller controller;
@@ -41,7 +43,10 @@ public class SetControllerParamReq {
 		if (parameter == null) {
 			throw new IllegalStateException("parameter not set!");
 		}
-		frame = FrameUtils.assemble(MessageType.Request, SET_HEADER, parameter.getBytes(), SET_FOOTER);
+		byte[] data = {
+				(byte)CONTROLLER_MESSAGE_TYPE
+		};
+		frame = FrameUtils.assemble(MessageType.Request, data, parameter.getBytes(), SET_FOOTER);
 		return this;
 	}
 
@@ -51,8 +56,16 @@ public class SetControllerParamReq {
 		}
 		SetControllerParamResp resp = SetControllerParamResp.getInstance(controller);
 		controller.callback(0xF2, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class SetControllerParamResp implements CallbackResponse {

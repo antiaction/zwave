@@ -6,6 +6,7 @@ import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Parameter;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -14,16 +15,17 @@ import com.antiaction.zwave.constants.MessageType;
  * Resp: 0x01 0x04 0x01 0x13 0x01 0xE8
  * @author nicl
  */
-public class SendDataReq {
+public class SendDataReq extends Request {
 
-	private static final byte[] SENDDATA_HEADER = {(byte)ControllerMessageType.SendData.getId()};
-	private static final byte[] SENDDATA_FOOTER = {(byte)0x05};
+	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.SendData.getId() & 255;
 
 	protected Controller controller;
 
 	protected Integer nodeId;
 
 	protected byte[] payload;
+
+	protected Byte callbackId;
 
 	protected byte[] frame;
 
@@ -51,6 +53,11 @@ public class SendDataReq {
 		return this;
 	}
 
+	public SendDataReq setCallbackId(Byte callbackId) {
+		this.callbackId = callbackId;
+		return this;
+	}
+
 	public SendDataReq build() {
 		if (nodeId == null) {
 			throw new IllegalStateException("nodeId not set!");
@@ -59,10 +66,17 @@ public class SendDataReq {
 			throw new IllegalStateException("payload not set!");
 		}
 		byte[] data = {
+				(byte)CONTROLLER_MESSAGE_TYPE,
 				(byte)nodeId.intValue(),
 				(byte)payload.length
 		};
-		frame = FrameUtils.assemble(MessageType.Request, SENDDATA_HEADER, data, payload, SENDDATA_FOOTER);
+		if (callbackId == null) {
+			frame = FrameUtils.assemble(MessageType.Request, data, payload);
+		}
+		else {
+			byte[] callbackIdArr = {callbackId};
+			frame = FrameUtils.assemble(MessageType.Request, data, payload, callbackIdArr);
+		}
 		return this;
 	}
 
@@ -72,8 +86,16 @@ public class SendDataReq {
 		}
 		SendDataResp resp = SendDataResp.getInstance(controller);
 		controller.callback(0x13, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class SendDataResp implements CallbackResponse {

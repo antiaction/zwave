@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
+import com.antiaction.zwave.Request;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -17,7 +18,9 @@ import com.antiaction.zwave.constants.MessageType;
  * Resp: 0x01 0x2B 0x01 0x07 0x01 0x00 0x00 0x86 0x00 0x01 0x00 0x5A 0xFE 0x81 0xFF 0x88 0x4F 0x1F 0x00 0x00 0xFB 0x9F 0x7D 0xA0 0x67 0x00 0x00 0x80 0x00 0x80 0x86 0x00 0x00 0x00 0xE8 0x73 0x00 0x00 0x0E 0x00 0x00 0x60 0x00 0x00 0xFB
  * @author nicl
  */
-public class GetCapabilitiesReq {
+public class GetCapabilitiesReq extends Request {
+
+	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.GetCapabilities.getId() & 255;
 
 	protected Controller controller;
 
@@ -33,7 +36,7 @@ public class GetCapabilitiesReq {
 
 	public GetCapabilitiesReq build() {
 		byte[] data = new byte[] {
-				(byte)ControllerMessageType.GetCapabilities.getId()
+				(byte)CONTROLLER_MESSAGE_TYPE
 		};
 		frame = FrameUtils.assemble(MessageType.Request, data);
 		return this;
@@ -45,8 +48,16 @@ public class GetCapabilitiesReq {
 		}
 		GetCapabilitiesResp resp = GetCapabilitiesResp.getInstance(controller);
 		controller.callback(0x07, resp);
-		controller.sendMessage(frame);
+		controller.sendMessage(this);
 		return resp;
+	}
+
+	@Override
+	public byte[] getFrame() {
+		if (frame == null) {
+			throw new IllegalStateException("frame not built!");
+		}
+		return frame;
 	}
 
 	public static class GetCapabilitiesResp implements CallbackResponse {
