@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
 
-import com.antiaction.zwave.Controller.UnknownApplicationCommandHandlerData;
+import com.antiaction.zwave.Communicator.UnknownApplicationCommandHandlerData;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.GenericDeviceClass;
 import com.antiaction.zwave.constants.SensorType;
@@ -63,6 +63,7 @@ public class TestZWave implements ApplicationListener {
 
 		try {
 			transport.open(portName);
+			controller.addListener(this);
 			controller.open(transport);
 		}
 		catch (NoSuchPortException e) {
@@ -81,9 +82,6 @@ public class TestZWave implements ApplicationListener {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		controller.addListener(this);
-		controller.start();
 
 		Optional<GenericDeviceClass> gdc;
 

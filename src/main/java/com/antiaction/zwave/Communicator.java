@@ -5,10 +5,22 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.TimeZone;
 
 import com.antiaction.common.bind.BFSignal;
 import com.antiaction.zwave.constants.Constants;
+import com.antiaction.zwave.constants.MessageType;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
+import com.antiaction.zwave.messages.ApplicationUpdateResp;
+import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
+import com.antiaction.zwave.messages.command.BasicCommand;
+import com.antiaction.zwave.messages.command.BatteryCommand;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
+import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
+import com.antiaction.zwave.messages.command.WakeUpCommand;
 import com.antiaction.zwave.transport.SerialTransport;
 
 public class Communicator {
@@ -24,6 +36,10 @@ public class Communicator {
 	protected TransmitterThread transmitterThread;
 
 	protected ReceiverThread receiverThread;
+
+	protected Request request;
+
+	protected Response response;
 
 	public Communicator() {
 	}
@@ -79,7 +95,6 @@ public class Communicator {
 			DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss.SSS Z']'");
 			dateFormat.setLenient(false);
 			dateFormat.setTimeZone(TimeZone.getDefault());
-			Request req;
 			byte[] frame;
 			int bfSignal;
 			int state = S_TRABSMIT_SEBD;
@@ -94,8 +109,9 @@ public class Communicator {
 							out.flush();
 						}
 						if (queueOut.items() > 0) {
-							req = queueOut.remove();
-							frame = req.getFrame();
+							request = queueOut.remove();
+							frame = request.getFrame();
+							response = request.getResponse();
 							// debug
 							System.out.println(dateFormat.format(new Date()) + " <  " + HexUtils.byteArrayToHexString(frame));
 							out.write(frame);
@@ -113,8 +129,9 @@ public class Communicator {
 							}
 							if ((bfSignal & BF_SEND_MESSAGE) != 0) {
 								if (queueOut.items() > 0) {
-									req = queueOut.remove();
-									frame = req.getFrame();
+									request = queueOut.remove();
+									frame = request.getFrame();
+									response = request.getResponse();
 									// debug
 									System.out.println(dateFormat.format(new Date()) + " <  " + HexUtils.byteArrayToHexString(frame));
 									out.write(frame);
@@ -175,6 +192,8 @@ public class Communicator {
 			byte[] frame = null;
 			int len = 0;
 			byte checksum;
+			int messageType;
+			int command;
 			try {
 				while ((c = in.read()) != -1) {
 					// debug
@@ -222,7 +241,42 @@ public class Communicator {
 								System.out.println(dateFormat.format(new Date()) + " Checksum error : " + checksum + " " + frame[frame.length - 1]);
 							}
 							signal.bfSignal(BF_SEND_ACK);
-							queueIn.insert(frame);
+							messageType = frame[2] & 255;
+							command = frame[3] & 255;
+							if (messageType == MessageType.Response.ordinal()) {
+								if (response != null) {
+									response.disassemble(frame);
+									response = null;
+								}
+								else {
+									System.out.println("Unexpected response frame: " + HexUtils.byteArrayToHexString(frame));
+								}
+							}
+							else if (messageType == MessageType.Request.ordinal()) {
+								switch (command) {
+								case 0x49:
+									// Wake up event.
+									ApplicationUpdateResp applicationUpdateResp = ApplicationUpdateResp.getInstance();
+									applicationUpdateResp.disassemble(frame);
+									onApplicationUpdate(applicationUpdateResp);
+									break;
+								case 0x04:
+									// Sensor data.
+									ApplicationCommandHandlerResp applicationCommandHandlerResp = ApplicationCommandHandlerResp.getInstance();
+									applicationCommandHandlerResp.disassemble(frame);
+									onApplicationCommandHandler(applicationCommandHandlerResp);
+									break;
+								default:
+									System.out.println("Unsupported request frame: " + HexUtils.byteArrayToHexString(frame));
+									break;
+								}
+								// debug
+								//System.out.println(pkt.length);
+							}
+							else {
+								System.out.println("Unsupported response frame: " + HexUtils.byteArrayToHexString(frame));
+							}
+							//queueIn.insert(frame);
 							state = S_RECEIVE_TYPE;
 						}
 						break;
@@ -234,6 +288,102 @@ public class Communicator {
 			}
 		}
 
+	}
+
+	/** Set of registered listeners. */
+	private Set<ApplicationListener> listenerSet = new HashSet<ApplicationListener>();
+
+	/**
+	 * Adds a listener to the list that is notified each time a change
+	 * to the data model occurs.
+	 * @param l	the ApplicationListener
+	 */
+	public void addListener(ApplicationListener l) {
+		synchronized ( listenerSet ) {
+			listenerSet.add( l );
+		}
+	}
+
+	/**
+	 * Removes a listener from the list that is notified each time a
+	 * change to the data model occurs.
+	 * @param l the ApplicationListener
+	 */
+	public void removeListener(ApplicationListener l) {
+		synchronized ( listenerSet ) {
+			listenerSet.remove( l );
+		}
+	}
+
+	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
+		synchronized ( listenerSet ) {
+			Iterator<ApplicationListener> listeners = listenerSet.iterator();
+			while ( listeners.hasNext() ) {
+				listeners.next().onApplicationUpdate(applicationUpdateResp);
+			}
+		}
+	}
+
+	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
+		// debug
+		/*
+		Optional<CommandClass> optionalCommandClass = CommandClass.getType(applicationCommandHandlerResp.payload[0]);
+		String commandClassStr;
+		if (optionalCommandClass.isPresent()) {
+			CommandClass commandClass = optionalCommandClass.get();
+			commandClassStr = commandClass.getLabel() + " (" + HexUtils.hexString(applicationCommandHandlerResp.payload[0]) + ")";
+		}
+		else {
+			commandClassStr = "Unknown (" + HexUtils.hexString(applicationCommandHandlerResp.payload[0]) + ")";
+		}
+		*/
+		// debug
+		//System.out.println("ApplicationCommandHandlerResp nodeId: " + applicationCommandHandlerResp.nodeId + " CommandClass: " + commandClassStr );
+
+		byte[] data = applicationCommandHandlerResp.payload;
+		ApplicationCommandHandlerData achData;
+
+		// CommandClass.
+		switch (data[0]) {
+		case (byte)0x20:
+			achData = BasicCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x72:
+			achData = ManufacturerSpecificCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x80:
+			achData = BatteryCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x84:
+			achData = WakeUpCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x31:
+			achData = SensorMultiLevelCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		default:
+			achData = new UnknownApplicationCommandHandlerData(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		}
+
+		synchronized ( listenerSet ) {
+			Iterator<ApplicationListener> listeners = listenerSet.iterator();
+			while ( listeners.hasNext() ) {
+				listeners.next().onApplicationCommandHandler(applicationCommandHandlerResp);
+			}
+		}
+	}
+
+	public static class UnknownApplicationCommandHandlerData extends ApplicationCommandHandlerData {
+		public byte[] data;
+		public UnknownApplicationCommandHandlerData(byte[] data) {
+			this.data = data;
+		}
 	}
 
 }

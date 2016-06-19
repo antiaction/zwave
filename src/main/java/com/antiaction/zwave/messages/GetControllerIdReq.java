@@ -2,10 +2,10 @@ package com.antiaction.zwave.messages;
 
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -24,6 +24,8 @@ public class GetControllerIdReq extends Request {
 
 	protected byte[] frame;
 
+	protected GetControllerIdResp response;
+
 	protected GetControllerIdReq(Controller controller) {
 		this.controller = controller;
 	}
@@ -40,14 +42,14 @@ public class GetControllerIdReq extends Request {
 		return this;
 	}
 
+	@Override
 	public GetControllerIdResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		GetControllerIdResp resp = GetControllerIdResp.getInstance(controller);
-		controller.callback(0x20, resp);
+		response = GetControllerIdResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -58,7 +60,12 @@ public class GetControllerIdReq extends Request {
 		return frame;
 	}
 
-	public static class GetControllerIdResp implements CallbackResponse {
+	@Override 
+	public GetControllerIdResp getResponse() {
+		return response;
+	}
+
+	public static class GetControllerIdResp extends Response {
 
 		protected Controller controller;
 
@@ -78,6 +85,7 @@ public class GetControllerIdReq extends Request {
 			return new GetControllerIdResp(controller);
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);

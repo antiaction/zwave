@@ -2,11 +2,11 @@ package com.antiaction.zwave.messages;
 
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Parameter;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -28,6 +28,8 @@ public class SendDataReq extends Request {
 	protected Byte callbackId;
 
 	protected byte[] frame;
+
+	protected SendDataResp response;
 
 	protected SendDataReq(Controller controller) {
 		this.controller = controller;
@@ -80,14 +82,14 @@ public class SendDataReq extends Request {
 		return this;
 	}
 
+	@Override
 	public SendDataResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		SendDataResp resp = SendDataResp.getInstance(controller);
-		controller.callback(0x13, resp);
+		response = SendDataResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -98,7 +100,12 @@ public class SendDataReq extends Request {
 		return frame;
 	}
 
-	public static class SendDataResp implements CallbackResponse {
+	@Override 
+	public SendDataResp getResponse() {
+		return response;
+	}
+
+	public static class SendDataResp extends Response {
 
 		protected Controller controller;
 
@@ -116,6 +123,7 @@ public class SendDataReq extends Request {
 			return new SendDataResp(controller);
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);

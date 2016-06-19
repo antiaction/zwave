@@ -1,6 +1,5 @@
 package com.antiaction.zwave.messages;
 
-import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.messages.command.ApplicationUpdateData;
 
@@ -10,8 +9,6 @@ import com.antiaction.zwave.messages.command.ApplicationUpdateData;
  * @author nicl
  */
 public class ApplicationUpdateResp {
-
-	protected Controller controller;
 
 	protected byte[] frame;
 
@@ -23,12 +20,11 @@ public class ApplicationUpdateResp {
 
 	public ApplicationUpdateData data;
 
-	protected ApplicationUpdateResp(Controller controller) {
-		this.controller = controller;
+	protected ApplicationUpdateResp() {
 	}
 
-	public static ApplicationUpdateResp getInstance(Controller controller) {
-		return new ApplicationUpdateResp(controller);
+	public static ApplicationUpdateResp getInstance() {
+		return new ApplicationUpdateResp();
 	}
 
 	public void disassemble(byte[] frame) {

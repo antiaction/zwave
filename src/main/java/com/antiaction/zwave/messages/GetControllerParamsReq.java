@@ -3,11 +3,11 @@ package com.antiaction.zwave.messages;
 import java.util.LinkedHashMap;
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Parameter;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.MessageType;
 
 /**
@@ -26,6 +26,8 @@ public class GetControllerParamsReq extends Request {
 	protected byte[] parameterIds;
 
 	protected byte[] frame;
+
+	protected GetControllerParamsResp response;
 
 	protected GetControllerParamsReq(Controller controller) {
 		this.controller = controller;
@@ -51,14 +53,14 @@ public class GetControllerParamsReq extends Request {
 		return this;
 	}
 
+	@Override
 	public GetControllerParamsResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		GetControllerParamsResp resp = GetControllerParamsResp.getInstance(controller);
-		controller.callback(0xF3, resp);
+		response = GetControllerParamsResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -69,7 +71,12 @@ public class GetControllerParamsReq extends Request {
 		return frame;
 	}
 
-	public static class GetControllerParamsResp implements CallbackResponse {
+	@Override 
+	public GetControllerParamsResp getResponse() {
+		return response;
+	}
+
+	public static class GetControllerParamsResp extends Response {
 
 		protected Controller controller;
 
@@ -87,6 +94,7 @@ public class GetControllerParamsReq extends Request {
 			return new GetControllerParamsResp(controller);
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			parameters = new LinkedHashMap<Integer, Parameter>();

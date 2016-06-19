@@ -6,10 +6,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -25,6 +25,8 @@ public class GetCapabilitiesReq extends Request {
 	protected Controller controller;
 
 	protected byte[] frame;
+
+	protected GetCapabilitiesResp response;
 
 	protected GetCapabilitiesReq(Controller controller) {
 		this.controller = controller;
@@ -42,14 +44,14 @@ public class GetCapabilitiesReq extends Request {
 		return this;
 	}
 
+	@Override
 	public GetCapabilitiesResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		GetCapabilitiesResp resp = GetCapabilitiesResp.getInstance(controller);
-		controller.callback(0x07, resp);
+		response = GetCapabilitiesResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -60,7 +62,12 @@ public class GetCapabilitiesReq extends Request {
 		return frame;
 	}
 
-	public static class GetCapabilitiesResp implements CallbackResponse {
+	@Override 
+	public GetCapabilitiesResp getResponse() {
+		return response;
+	}
+
+	public static class GetCapabilitiesResp extends Response {
 
 		protected Controller controller;
 
@@ -90,6 +97,7 @@ public class GetCapabilitiesReq extends Request {
 			return new GetCapabilitiesResp(controller);
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);

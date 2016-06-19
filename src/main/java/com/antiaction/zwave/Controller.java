@@ -1,15 +1,5 @@
 package com.antiaction.zwave;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
-import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq;
 import com.antiaction.zwave.messages.GetControllerIdReq;
 import com.antiaction.zwave.messages.GetControllerParamsReq;
@@ -17,52 +7,11 @@ import com.antiaction.zwave.messages.IdentifyNodeReq;
 import com.antiaction.zwave.messages.SendDataReq;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq;
 import com.antiaction.zwave.messages.SetControllerParamReq;
-import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
-import com.antiaction.zwave.messages.command.BasicCommand;
-import com.antiaction.zwave.messages.command.BatteryCommand;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
-import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
-import com.antiaction.zwave.messages.command.WakeUpCommand;
-import com.antiaction.zwave.transport.SerialTransport;
 
-public class Controller implements Runnable {
-
-	protected Thread thread;
-
-	protected SerialTransport transport;
-
-	protected Communicator communicator;
+public class Controller extends Communicator {
 
 	public Controller() {
-		communicator = new Communicator();
-	}
-
-	public void start() {
-		thread = new Thread(this, this.getClass().getSimpleName());
-		thread.start();
-	}
-
-	public void open(SerialTransport transport) {
-		communicator.open(transport);
-	}
-
-	public void close() {
-		communicator.close();
-	}
-
-	public void callback(int command, CallbackResponse callbackResponse) {
-		synchronized (callbacks) {
-			List<CallbackResponse> callbackList = callbacks.get(command);
-			if (callbackList == null) {
-				callbackList = new LinkedList<>();
-				callbacks.put(command, callbackList);
-			}
-			callbackList.add(callbackResponse);
-		}
-	}
-
-	public void sendMessage(Request req) {
-		communicator.sendMessage(req);
+		super();
 	}
 
 	public GetControllerIdReq getGetControllerIdReq() {
@@ -91,146 +40,6 @@ public class Controller implements Runnable {
 
 	public SendDataReq getSendDataReq() {
 		return SendDataReq.getInstance(this);
-	}
-
-	protected Map<Integer, List<CallbackResponse>> callbacks = new TreeMap<>();
-
-	public void run() {
-		byte[] frame;
-		int command;
-		List<CallbackResponse> callbackList;
-		CallbackResponse callback;
-		boolean bLoop = true;
-		while (bLoop) {
-			frame = communicator.recvMessage();
-			command = frame[3] & 255;
-			callback = null;
-			synchronized (callbacks) {
-				callbackList = callbacks.get(command);
-				if (callbackList != null && callbackList.size() > 0) {
-					callback = callbackList.remove(0);
-				}
-			}
-			if (callback != null) {
-				callback.disassemble(frame);
-			}
-			else {
-				switch (command) {
-				case 0x49:
-					// Wake up event.
-					ApplicationUpdateResp applicationUpdateResp = ApplicationUpdateResp.getInstance(this);
-					applicationUpdateResp.disassemble(frame);
-					onApplicationUpdate(applicationUpdateResp);
-					break;
-				case 0x04:
-					// Sensor data.
-					ApplicationCommandHandlerResp applicationCommandHandlerResp = ApplicationCommandHandlerResp.getInstance(this);
-					applicationCommandHandlerResp.disassemble(frame);
-					onApplicationCommandHandler(applicationCommandHandlerResp);
-					break;
-				default:
-					break;
-				}
-				// debug
-				//System.out.println(pkt.length);
-			}
-		}
-	}
-
-	/** Set of registered listeners. */
-	private Set<ApplicationListener> listenerSet = new HashSet<ApplicationListener>();
-
-	/**
-	 * Adds a listener to the list that is notified each time a change
-	 * to the data model occurs.
-	 * @param l	the ApplicationListener
-	 */
-	public void addListener(ApplicationListener l) {
-		synchronized ( listenerSet ) {
-			listenerSet.add( l );
-		}
-	}
-
-	/**
-	 * Removes a listener from the list that is notified each time a
-	 * change to the data model occurs.
-	 * @param l the ApplicationListener
-	 */
-	public void removeListener(ApplicationListener l) {
-		synchronized ( listenerSet ) {
-			listenerSet.remove( l );
-		}
-	}
-
-	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
-		synchronized ( listenerSet ) {
-			Iterator<ApplicationListener> listeners = listenerSet.iterator();
-			while ( listeners.hasNext() ) {
-				listeners.next().onApplicationUpdate(applicationUpdateResp);
-			}
-		}
-	}
-
-	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
-		// debug
-		/*
-		Optional<CommandClass> optionalCommandClass = CommandClass.getType(applicationCommandHandlerResp.payload[0]);
-		String commandClassStr;
-		if (optionalCommandClass.isPresent()) {
-			CommandClass commandClass = optionalCommandClass.get();
-			commandClassStr = commandClass.getLabel() + " (" + HexUtils.hexString(applicationCommandHandlerResp.payload[0]) + ")";
-		}
-		else {
-			commandClassStr = "Unknown (" + HexUtils.hexString(applicationCommandHandlerResp.payload[0]) + ")";
-		}
-		*/
-		// debug
-		//System.out.println("ApplicationCommandHandlerResp nodeId: " + applicationCommandHandlerResp.nodeId + " CommandClass: " + commandClassStr );
-
-		byte[] data = applicationCommandHandlerResp.payload;
-		ApplicationCommandHandlerData achData;
-
-		// CommandClass.
-		switch (data[0]) {
-		case (byte)0x20:
-			achData = BasicCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x72:
-			achData = ManufacturerSpecificCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x80:
-			achData = BatteryCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x84:
-			achData = WakeUpCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x31:
-			achData = SensorMultiLevelCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		default:
-			achData = new UnknownApplicationCommandHandlerData(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		}
-
-		synchronized ( listenerSet ) {
-			Iterator<ApplicationListener> listeners = listenerSet.iterator();
-			while ( listeners.hasNext() ) {
-				listeners.next().onApplicationCommandHandler(applicationCommandHandlerResp);
-			}
-		}
-	}
-
-	public static class UnknownApplicationCommandHandlerData extends ApplicationCommandHandlerData {
-		public byte[] data;
-		public UnknownApplicationCommandHandlerData(byte[] data) {
-			this.data = data;
-		}
 	}
 
 }

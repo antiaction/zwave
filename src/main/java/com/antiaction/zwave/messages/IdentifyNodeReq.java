@@ -3,10 +3,10 @@ package com.antiaction.zwave.messages;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.BasicDeviceClass;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.GenericDeviceClass;
@@ -27,6 +27,8 @@ public class IdentifyNodeReq extends Request {
 	protected Integer nodeId;
 
 	protected byte[] frame;
+
+	protected IdentifyNodeResp response;
 
 	protected IdentifyNodeReq(Controller controller) {
 		this.controller = controller;
@@ -53,14 +55,14 @@ public class IdentifyNodeReq extends Request {
 		return this;
 	}
 
+	@Override 
 	public IdentifyNodeResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		IdentifyNodeResp resp = IdentifyNodeResp.getInstance(controller);
-		controller.callback(0x41, resp);
+		response = IdentifyNodeResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -71,7 +73,12 @@ public class IdentifyNodeReq extends Request {
 		return frame;
 	}
 
-	public static class IdentifyNodeResp implements CallbackResponse {
+	@Override 
+	public IdentifyNodeResp getResponse() {
+		return response;
+	}
+
+	public static class IdentifyNodeResp extends Response {
 
 		protected Controller controller;
 
@@ -101,6 +108,7 @@ public class IdentifyNodeReq extends Request {
 			return new IdentifyNodeResp(controller);
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);

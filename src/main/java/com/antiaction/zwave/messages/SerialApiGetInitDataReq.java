@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import com.antiaction.zwave.CallbackResponse;
 import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Request;
+import com.antiaction.zwave.Response;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.ControllerMode;
@@ -27,6 +27,8 @@ public class SerialApiGetInitDataReq extends Request {
 
 	protected byte[] frame;
 
+	protected SerialApiGetInitDataResp response;
+
 	protected SerialApiGetInitDataReq(Controller controller) {
 		this.controller = controller;
 	}
@@ -43,14 +45,14 @@ public class SerialApiGetInitDataReq extends Request {
 		return this;
 	}
 
+	@Override
 	public SerialApiGetInitDataResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		SerialApiGetInitDataResp resp = SerialApiGetInitDataResp.getInstance(controller);
-		controller.callback(0x02, resp);
+		response = SerialApiGetInitDataResp.getInstance(controller);
 		controller.sendMessage(this);
-		return resp;
+		return response;
 	}
 
 	@Override
@@ -61,7 +63,12 @@ public class SerialApiGetInitDataReq extends Request {
 		return frame;
 	}
 
-	public static class SerialApiGetInitDataResp implements CallbackResponse {
+	@Override 
+	public SerialApiGetInitDataResp getResponse() {
+		return response;
+	}
+
+	public static class SerialApiGetInitDataResp extends Response {
 
 		protected Controller controller;
 
@@ -92,6 +99,7 @@ public class SerialApiGetInitDataReq extends Request {
 			return false;
 		}
 
+		@Override
 		public void disassemble(byte[] frame) {
 			this.frame = frame;
 			byte[] data = FrameUtils.disassemble(frame);
