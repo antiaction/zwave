@@ -24,6 +24,7 @@ import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.SwitchBinaryCommand;
 import com.antiaction.zwave.messages.command.SwitchMultiLevelCommand;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
+import com.antiaction.zwave.messages.command.VersionCommand;
 import com.antiaction.zwave.messages.command.WakeUpCommand;
 import com.antiaction.zwave.transport.SerialTransport;
 
@@ -440,6 +441,10 @@ public class Communicator {
 			break;
 		case (byte)0x84:
 			achData = WakeUpCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x86:
+			achData = VersionCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
 		default:

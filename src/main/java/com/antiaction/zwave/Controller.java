@@ -2,7 +2,7 @@ package com.antiaction.zwave;
 
 import com.antiaction.zwave.messages.AddNodeToNetworkReq;
 import com.antiaction.zwave.messages.GetCapabilitiesReq;
-import com.antiaction.zwave.messages.GetControllerIdReq;
+import com.antiaction.zwave.messages.MemoryGetIdReq;
 import com.antiaction.zwave.messages.GetControllerParamsReq;
 import com.antiaction.zwave.messages.IdentifyNodeReq;
 import com.antiaction.zwave.messages.RemoveNodeFromNetworkReq;
@@ -16,8 +16,8 @@ public class Controller extends Communicator {
 		super();
 	}
 
-	public GetControllerIdReq getGetControllerIdReq() {
-		return GetControllerIdReq.getInstance(this);
+	public MemoryGetIdReq getMemoryGetIdReq() {
+		return MemoryGetIdReq.getInstance(this);
 	}
 
 	public SerialApiGetInitDataReq getSerialApiGetInitData() {

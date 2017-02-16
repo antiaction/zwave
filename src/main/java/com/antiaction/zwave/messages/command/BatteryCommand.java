@@ -17,20 +17,20 @@ public class BatteryCommand {
 	protected BatteryCommand() {
 	}
 
-	private static final byte[] BATTERY_REQ;
+	private static final byte[] BATTERY_GET_REQ;
 
 	static {
-		BATTERY_REQ = new byte[] {
+		BATTERY_GET_REQ = new byte[] {
 				(byte)COMMAND_CLASS,
 				(byte)BATTERY_GET
 		};
 	}
 
-	public static byte[] assembleBatteryReq() {
-		return BATTERY_REQ;
+	public static byte[] assembleBatteryGetReq() {
+		return BATTERY_GET_REQ;
 	}
 
-	public static Battery disassemble(byte[] data) {
+	public static BatteryReport disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;
@@ -38,9 +38,9 @@ public class BatteryCommand {
 			if (commandClass == COMMAND_CLASS) {
 				switch (command) {
 				case BATTERY_REPORT:
-					Battery battery = new Battery();
-					battery.level = data[idx++] & 255;
-					return battery;
+					BatteryReport batteryReport = new BatteryReport();
+					batteryReport.level = data[idx++] & 255;
+					return batteryReport;
 				case BATTERY_GET:
 				default:
 					break;
@@ -50,7 +50,7 @@ public class BatteryCommand {
 		return null;
 	}
 
-	public static class Battery extends ApplicationCommandHandlerData {
+	public static class BatteryReport extends ApplicationCommandHandlerData {
 		public int level;
 	}
 

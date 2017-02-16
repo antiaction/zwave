@@ -27,7 +27,7 @@ public class BasicCommand {
 		};
 	}
 
-	public static byte[] assembleBasicReq() {
+	public static byte[] assembleBasicGetReq() {
 		return BASIC_REQ;
 	}
 

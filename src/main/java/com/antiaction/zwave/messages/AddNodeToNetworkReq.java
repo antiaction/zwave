@@ -10,9 +10,24 @@ import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
 /**
+ * Simple steps to add a device
+ * S 01 04 00 4A 01 B0             Request the z-trolle to START adding a device
+ * R 06
+ * R 01 07 00 4A 02 01 00 00 B1
+ * S 06
+ * R 01 07 00 4A 02 02 00 00 B2
+ * S 06   
+ * R 01 16 00 4A 02 03 12 0F 04 10 03 25 27 2B 2C 85 72 86 91 77 73 EF 82 24  The button was pushed
+ * S 06
+ * R 01 07 00 4A 02 06 12 00 A4    The device 12h was added
+ * S 06
+ * S 01 04 00 4A 05 B4             Send the z-troller a adding device completion
+ * R 06
+ *
  * 0x01 0x07 0x00 0x4A 0x03 0x01 0x00 0x00 0xB0
  *
  * @author nicl
+ *
  */
 public class AddNodeToNetworkReq extends Request {
 

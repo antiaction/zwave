@@ -1,7 +1,9 @@
 package com.antiaction.zwave.messages;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Semaphore;
@@ -10,6 +12,7 @@ import com.antiaction.zwave.Controller;
 import com.antiaction.zwave.FrameUtils;
 import com.antiaction.zwave.Request;
 import com.antiaction.zwave.Response;
+import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.constants.ControllerMessageType;
 import com.antiaction.zwave.constants.MessageType;
 
@@ -89,6 +92,8 @@ public class GetCapabilitiesReq extends Request {
 
 		public List<Integer> commandList;
 
+		public LinkedHashMap<Integer, Optional<CommandClass>> commandLinkedMap;
+
 		protected GetCapabilitiesResp(Controller controller) {
 			this.controller = controller;
 		}
@@ -109,24 +114,18 @@ public class GetCapabilitiesReq extends Request {
 			deviceId = ((data[idx++] & 255) << 8) | (data[idx++] & 255);
 			commandSet = new TreeSet<>();
 			commandList = new LinkedList<>();
+			commandLinkedMap = new LinkedHashMap<Integer, Optional<CommandClass>>();
 			int bits;
 			int bit = 1;
-			//Optional<CommandClass> commandClass;
+			Optional<CommandClass> commandClass;
 			while (idx < data.length) {
 				bits = data[idx++] & 255;
 				for (int i=0; i<8; ++i) {
 					if ((bits & 1) == 1) {
 						commandSet.add(bit);
 						commandList.add(bit);
-						/*
 						commandClass = CommandClass.getType(bit);
-						if (commandClass.isPresent()) {
-							System.out.println(commandClass.get().getLabel());
-						}
-						else {
-							System.out.println(bit);
-						}
-						*/
+						commandLinkedMap.put(bit, commandClass);
 					}
 					bits >>= 1;
 					++bit;

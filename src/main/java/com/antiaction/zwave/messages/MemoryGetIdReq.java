@@ -14,7 +14,7 @@ import com.antiaction.zwave.constants.MessageType;
  * > 0x01 0x08 0x01 0x20 0xF1 0xB7 0x9F 0x87 0x01 0x89
  * @author nicl
  */
-public class GetControllerIdReq extends Request {
+public class MemoryGetIdReq extends Request {
 
 	private static final int CONTROLLER_MESSAGE_TYPE = ControllerMessageType.MemoryGetId.getId() & 255;
 
@@ -24,17 +24,17 @@ public class GetControllerIdReq extends Request {
 
 	protected byte[] frame;
 
-	protected GetControllerIdResp response;
+	protected MemoryGetIdResp response;
 
-	protected GetControllerIdReq(Controller controller) {
+	protected MemoryGetIdReq(Controller controller) {
 		this.controller = controller;
 	}
 
-	public static GetControllerIdReq getInstance(Controller controller) {
-		return new GetControllerIdReq(controller);
+	public static MemoryGetIdReq getInstance(Controller controller) {
+		return new MemoryGetIdReq(controller);
 	}
 
-	public GetControllerIdReq build() {
+	public MemoryGetIdReq build() {
 		byte[] data = new byte[] {
 				(byte)CONTROLLER_MESSAGE_TYPE
 		};
@@ -43,11 +43,11 @@ public class GetControllerIdReq extends Request {
 	}
 
 	@Override
-	public GetControllerIdResp send() {
+	public MemoryGetIdResp send() {
 		if (frame == null) {
 			throw new IllegalStateException("frame not built!");
 		}
-		response = GetControllerIdResp.getInstance(controller);
+		response = MemoryGetIdResp.getInstance(controller);
 		controller.sendMessage(this);
 		return response;
 	}
@@ -61,11 +61,11 @@ public class GetControllerIdReq extends Request {
 	}
 
 	@Override 
-	public GetControllerIdResp getResponse() {
+	public MemoryGetIdResp getResponse() {
 		return response;
 	}
 
-	public static class GetControllerIdResp extends Response {
+	public static class MemoryGetIdResp extends Response {
 
 		protected Controller controller;
 
@@ -77,12 +77,12 @@ public class GetControllerIdReq extends Request {
 
 		public int controllerId;
 
-		protected GetControllerIdResp(Controller controller) {
+		protected MemoryGetIdResp(Controller controller) {
 			this.controller = controller;
 		}
 
-		public static GetControllerIdResp getInstance(Controller controller) {
-			return new GetControllerIdResp(controller);
+		public static MemoryGetIdResp getInstance(Controller controller) {
+			return new MemoryGetIdResp(controller);
 		}
 
 		@Override

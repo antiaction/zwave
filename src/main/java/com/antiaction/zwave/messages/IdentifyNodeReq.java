@@ -92,7 +92,13 @@ public class IdentifyNodeReq extends Request {
 
 		public int version;
 
+		public int maxBaudRate;
+
 		public boolean frequentlyListening;
+
+		public boolean beaming;
+
+		public boolean security;
 
 		public BasicDeviceClass basicDeviceClass;
 
@@ -115,7 +121,13 @@ public class IdentifyNodeReq extends Request {
 			listening = (data[0] & 0x80) != 0;
 			routing = (data[0] & 0x40) != 0;
 			version = (data[0] & 0x07) + 1;
+			maxBaudRate = 9600;
+			if ((data[0] & 0x38) == 0x10) {
+				maxBaudRate = 40000;
+			}
 			frequentlyListening = (data[1] & 0x60) != 0;
+			beaming = ((data[1] & 0x10) != 0);
+			security = ((data[1] & 0x01) != 0);
 			int idx = 3;
 			basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
 			genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
