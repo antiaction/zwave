@@ -149,7 +149,7 @@ public class TestZWave implements ApplicationListener {
 			}
 		}
 
-		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x01});
+		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x00});
 		SetControllerParamResp setControllerParamResp = controller.getSetControllerParam().setParameter(parameter).build().send();
 		setControllerParamResp.waitFor();
 		// debug
