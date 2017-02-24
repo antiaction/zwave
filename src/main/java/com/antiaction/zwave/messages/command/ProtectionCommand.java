@@ -15,6 +15,9 @@ public class ProtectionCommand {
 	public static final int PROTECTION_PROTECTION_BY_SEQUENCE = 0x01;
 	public static final int PROTECTION_NO_OPERATION_POSSIBLE = 0x02;
 
+	protected ProtectionCommand() {
+	}
+
 	public static byte[] assembleProtectionSetReq(int protectionState) {
 		byte[] data = {
 				(byte)COMMAND_CLASS,

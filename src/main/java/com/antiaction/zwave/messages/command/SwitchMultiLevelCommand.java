@@ -6,13 +6,13 @@ public class SwitchMultiLevelCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SWITCH_MULTILEVEL.getClassCode() & 255;
 
-    private static final int SWITCH_MULTILEVEL_SET = 0x01;
-    private static final int SWITCH_MULTILEVEL_GET = 0x02;
-    private static final int SWITCH_MULTILEVEL_REPORT = 0x03;
-    private static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE = 0x04;
-    private static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE = 0x05;
-    private static final int SWITCH_MULTILEVEL_SUPPORTED_GET = 0x06;
-    private static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT = 0x07;
+	public static final int SWITCH_MULTILEVEL_SET = 0x01;
+	public static final int SWITCH_MULTILEVEL_GET = 0x02;
+	public static final int SWITCH_MULTILEVEL_REPORT = 0x03;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE = 0x04;
+	public static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE = 0x05;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_GET = 0x06;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT = 0x07;
 
 	protected SwitchMultiLevelCommand() {
 	}

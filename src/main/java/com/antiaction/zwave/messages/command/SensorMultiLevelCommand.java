@@ -25,10 +25,10 @@ public class SensorMultiLevelCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SENSOR_MULTILEVEL.getClassCode() & 255;
 
-	private static final int SENSOR_MULTI_LEVEL_SUPPORTED_GET = 0x01;
-	private static final int SENSOR_MULTI_LEVEL_SUPPORTED_REPORT = 0x02;
-	private static final int SENSOR_MULTI_LEVEL_GET = 0x04;
-	private static final int SENSOR_MULTI_LEVEL_REPORT = 0x05;
+	public static final int SENSOR_MULTI_LEVEL_SUPPORTED_GET = 0x01;
+	public static final int SENSOR_MULTI_LEVEL_SUPPORTED_REPORT = 0x02;
+	public static final int SENSOR_MULTI_LEVEL_GET = 0x04;
+	public static final int SENSOR_MULTI_LEVEL_REPORT = 0x05;
 
 	protected SensorMultiLevelCommand() {
 	}

@@ -16,6 +16,9 @@ public class ConfigurationCommand {
 	public static final int CONFIGURATION_RESERVED_SHIFT = 0x03;
 	public static final int CONFIGURATION_DEFAULT_BIT_MASK = 0x80;
 
+	protected ConfigurationCommand() {
+	}
+
 	public static byte[] assembleConfiguratinSetReq(int parameterNumber, int size, int value) {
 		byte[] data;
 		switch (size) {

@@ -14,6 +14,9 @@ public class ClockCommand {
 	public static final int CLOCK_WEEKDAY_MASK = 0xE0;
 	public static final int CLOCK_WEEKDAY_SHIFT = 0x05;
 
+	protected ClockCommand() {
+	}
+
 	public static byte[] assembleClockSetReq(int weekday, int hour, int minute) {
 		byte[] data = {
 				(byte)COMMAND_CLASS,

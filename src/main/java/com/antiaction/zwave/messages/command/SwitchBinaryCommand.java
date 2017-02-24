@@ -6,9 +6,9 @@ public class SwitchBinaryCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SWITCH_BINARY.getClassCode() & 255;
 
-    private static final int SWITCH_BINARY_SET = 0x01;
-    private static final int SWITCH_BINARY_GET = 0x02;
-    private static final int SWITCH_BINARY_REPORT = 0x03;
+	public static final int SWITCH_BINARY_SET = 0x01;
+	public static final int SWITCH_BINARY_GET = 0x02;
+	public static final int SWITCH_BINARY_REPORT = 0x03;
 
     protected SwitchBinaryCommand() {
 	}

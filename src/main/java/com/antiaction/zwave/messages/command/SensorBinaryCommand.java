@@ -6,7 +6,7 @@ public class SensorBinaryCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SENSOR_BINARY.getClassCode() & 255;
 
-    private static final int SENSOR_BINARY_REPORT = 0x03;
+    public static final int SENSOR_BINARY_REPORT = 0x03;
 
 	protected SensorBinaryCommand() {
 	}
