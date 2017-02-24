@@ -26,7 +26,7 @@ import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.Manufac
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelReport;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelSupportedReport;
-import com.antiaction.zwave.messages.command.SwitchBinaryCommand.SwitchBinaryReport;
+import com.antiaction.zwave.messages.command.BinarySwitchCommand.SwitchBinaryReport;
 import com.antiaction.zwave.messages.command.SwitchMultiLevelCommand.SwitchMultiLevelReport;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV1;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV2;

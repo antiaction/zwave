@@ -2,7 +2,7 @@ package com.antiaction.zwave.messages.command;
 
 import com.antiaction.zwave.constants.CommandClass;
 
-public class SwitchBinaryCommand {
+public class BinarySwitchCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SWITCH_BINARY.getClassCode() & 255;
 
@@ -10,7 +10,7 @@ public class SwitchBinaryCommand {
 	public static final int SWITCH_BINARY_GET = 0x02;
 	public static final int SWITCH_BINARY_REPORT = 0x03;
 
-    protected SwitchBinaryCommand() {
+    protected BinarySwitchCommand() {
 	}
 
 	public static byte[] assembleSwitchBinarySetReq(int value) {
@@ -18,6 +18,16 @@ public class SwitchBinaryCommand {
 				(byte)COMMAND_CLASS,
 				(byte)SWITCH_BINARY_SET,
 				(byte)(value & 255)
+		};
+		return data;
+	}
+
+	public static byte[] assembleSwitchBinarySetReqV2(int targetValue, int duration) {
+		byte[] data = new byte[] {
+				(byte)COMMAND_CLASS,
+				(byte)SWITCH_BINARY_SET,
+				(byte)(targetValue & 255),
+				(byte)(duration & 255)
 		};
 		return data;
 	}
@@ -43,10 +53,18 @@ public class SwitchBinaryCommand {
 			if (commandClass == COMMAND_CLASS) {
 				switch (command) {
 				case SWITCH_BINARY_REPORT:
-					int value = data[idx++];
-					SwitchBinaryReport switchBinaryReport = new SwitchBinaryReport();
-					switchBinaryReport.value = value;
-					return switchBinaryReport;
+					if ((data.length - idx) == 1) {
+						SwitchBinaryReport binarySwitchReport = new SwitchBinaryReport();
+						binarySwitchReport.value = data[idx++] & 255;
+						return binarySwitchReport;
+					}
+					else {
+						SwitchBinaryReportV2 binarySwitchReport = new SwitchBinaryReportV2();
+						binarySwitchReport.currentValue = data[idx++] & 255;
+						binarySwitchReport.targetValue = data[idx++] & 255;
+						binarySwitchReport.duration = data[idx++] & 255;
+						return binarySwitchReport;
+					}
 				case SWITCH_BINARY_SET:
 				case SWITCH_BINARY_GET:
 				default:
@@ -59,6 +77,12 @@ public class SwitchBinaryCommand {
 
 	public static class SwitchBinaryReport extends ApplicationCommandHandlerData {
 		public int value;
+	}
+
+	public static class SwitchBinaryReportV2 extends ApplicationCommandHandlerData {
+		public int currentValue;
+		public int targetValue;
+		public int duration;
 	}
 
 }
