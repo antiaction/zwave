@@ -1,10 +1,5 @@
 package com.antiaction.zwave;
 
-import gnu.io.NRSerialPort;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.UnsupportedCommOperationException;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -18,34 +13,32 @@ import com.antiaction.zwave.constants.SensorType;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq.GetCapabilitiesResp;
-import com.antiaction.zwave.messages.MemoryGetIdReq.MemoryGetIdResp;
 import com.antiaction.zwave.messages.GetControllerParamsReq.GetControllerParamsResp;
 import com.antiaction.zwave.messages.IdentifyNodeReq.IdentifyNodeResp;
+import com.antiaction.zwave.messages.MemoryGetIdReq.MemoryGetIdResp;
 import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
-import com.antiaction.zwave.messages.command.AlarmCommand;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
-import com.antiaction.zwave.messages.command.BasicCommand;
-import com.antiaction.zwave.messages.command.BasicCommand.Basic;
-import com.antiaction.zwave.messages.command.BatteryCommand;
+import com.antiaction.zwave.messages.command.BasicCommand.BasicReport;
 import com.antiaction.zwave.messages.command.BatteryCommand.BatteryReport;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelReport;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelSupportedReport;
-import com.antiaction.zwave.messages.command.SwitchBinaryCommand;
 import com.antiaction.zwave.messages.command.SwitchBinaryCommand.SwitchBinaryReport;
 import com.antiaction.zwave.messages.command.SwitchMultiLevelCommand.SwitchMultiLevelReport;
-import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
-import com.antiaction.zwave.messages.command.VersionCommand;
-import com.antiaction.zwave.messages.command.VersionCommand.VersionReport;
-import com.antiaction.zwave.messages.command.WakeUpCommand;
+import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV1;
+import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV2;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalCapabilitiesReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalReport;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpNotification;
 import com.antiaction.zwave.transport.SerialTransport;
+
+import gnu.io.NRSerialPort;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
 
 public class TestZWave implements ApplicationListener {
 
@@ -149,7 +142,7 @@ public class TestZWave implements ApplicationListener {
 			}
 		}
 
-		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x00});
+		parameter = new Parameter((byte)0x51, new byte[] {(byte)0x01});
 		SetControllerParamResp setControllerParamResp = controller.getSetControllerParam().setParameter(parameter).build().send();
 		setControllerParamResp.waitFor();
 		// debug
@@ -187,12 +180,12 @@ public class TestZWave implements ApplicationListener {
 
 		sleep(10000);
 
+		/*
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
@@ -200,8 +193,9 @@ public class TestZWave implements ApplicationListener {
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
 		/*
 		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
 		sendDataResp = controller.getSendDataReq().setNodeId(20).setParameter(parameter).build().send();
@@ -216,71 +210,86 @@ public class TestZWave implements ApplicationListener {
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-		*/
 		sleep(10000);
+		*/
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-		*/
 		sleep(10000);
+		*/
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BatteryCommand.assembleBatteryGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BatteryCommand.assembleBatteryReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-		*/
 		sleep(10000);
+		*/
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BasicCommand.assembleBasicGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BasicCommand.assembleBasicReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
 		*/
-		sleep(10000);
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
-		sendDataResp.waitFor();
-		// debug
-		System.out.println(Constants.INDENT + sendDataResp.success);
-
-		sleep(10000);
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
+
+		sleep(10000);
 		*/
+
+		/*
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalCapabilitiesGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalSetReq(300, 1)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(WakeUpCommand.assembleWakeUpIntervalGetReq()).build().send();
 		sendDataResp.waitFor();
@@ -289,46 +298,42 @@ public class TestZWave implements ApplicationListener {
 		*/
 		sleep(10000);
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(4).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelSupportedGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelSupportedGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x01)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x03)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x05)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x1B)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		/*
@@ -346,51 +351,66 @@ public class TestZWave implements ApplicationListener {
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		*/
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(4).setPayload(SwitchBinaryCommand.assembleSwitchBinarySetReq(1)).build().send();
 		//sendDataResp = controller.getSendDataReq().setNodeId(4).setPayload(SwitchBinaryCommand.assembleSwitchBinaryGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
 
 		// debug
 		System.out.println("Here comes thunder...");
 
 		sleep(10000);
 
-		//AddNodeToNetworkResp addNodeToNetworkResp = controller.getAddNodeToNetworkReq().build().send();
-		//addNodeToNetworkResp.waitFor();
-		// debug
-		//System.out.println(Constants.INDENT + sendDataResp.success);
-
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(AlarmCommand.assembleBatteryReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
 
+		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(VersionCommand.assembleVersionGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(VersionCommand.assembleVersionGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
 
 		sendDataResp = controller.getSendDataReq().setNodeId(4).setPayload(VersionCommand.assembleVersionGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
-
 		sleep(10000);
+		*/
+
+		/*
+		AddNodeToNetworkResp addNodeToNetworkResp = controller.getAddNodeToNetworkReq().build().send();
+		addNodeToNetworkResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+		*/
+
+		/*
+		System.out.println("Reset.");
+
+		parameter = new Parameter((byte)0xff, new byte[] {(byte)0x01});
+		setControllerParamResp = controller.getSetControllerParam().setParameter(parameter).build().send();
+		setControllerParamResp.waitFor();
+		// debug
+		System.out.println(setControllerParamResp.success);
+		sleep(10000);
+		*/
 
 		try {
 			Thread.sleep(24 * 60 * 60 * 1000);
@@ -413,9 +433,17 @@ public class TestZWave implements ApplicationListener {
 		}
 	}
 
+	/*
+	 * [2017-02-22 22:39:58.012 +0100]  > 0x01 0x16 0x00 0x49 0x84 0x07 0x10 0x04 0x08 0x04 0x80 0x46 0x81 0x72 0x8F 0x75 0x43 0x86 0x84 0xEF 0x46 0x81 0x8F 0x12
+	 * [2017-02-22 22:39:58.013 +0100] <  0x06
+	 * [2017-02-22 22:46:16.187 +0100]  > 0x01 0x18 0x00 0x49 0x84 0x02 0x12 0x04 0x21 0x01 0x5E 0x86 0x72 0x59 0x85 0x73 0x71 0x84 0x80 0x30 0x31 0x70 0x7A 0x5A 0xEF 0xD0
+	 * [2017-02-22 22:46:16.188 +0100] <  0x06
+	 * [2017-02-22 22:47:07.752 +0100]  > 0x01 0x16 0x00 0x49 0x84 0x04 0x10 0x04 0x08 0x04 0x80 0x46 0x81 0x72 0x8F 0x75 0x43 0x86 0x84 0xEF 0x46 0x81 0x8F 0x11
+	 * [2017-02-22 22:47:07.752 +0100] <  0x06
+	 */
 	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
 		// debug
-		//System.out.println("ApplicationUpdate nodeId: " + applicationUpdateResp.nodeId);
+		System.out.println("ApplicationUpdate nodeId: " + applicationUpdateResp.nodeId);
 		//byte[] data = new byte[] {(byte)0x13, (byte)applicationUpdateResp.nodeId, (byte)0x06, (byte)0x84, (byte)0x04, (byte)0x00, (byte)0x01, (byte)0x68, (byte)0x01, (byte)0x05, (byte)0x03};
 		//controller.queueOut.insert(FrameUtils.assemble(MessageType.Request, data));
 	}
@@ -423,8 +451,8 @@ public class TestZWave implements ApplicationListener {
 	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
 		ApplicationCommandHandlerData data = applicationCommandHandlerResp.data;
 		if (data != null) {
-			if (data instanceof Basic) {
-				Basic basicResp = (Basic)data;
+			if (data instanceof BasicReport) {
+				BasicReport basicResp = (BasicReport)data;
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic value: " + basicResp.value);
 			}
 			else if (data instanceof SwitchBinaryReport) {
@@ -471,27 +499,38 @@ public class TestZWave implements ApplicationListener {
 
 				sleep(1000);
 				*/
-				sendDataResp = controller.getSendDataReq().setNodeId(applicationCommandHandlerResp.nodeId).setPayload(ThermostatSetpointCommand.assembleThermostatSetpointGetReq()).build().send();
-				sendDataResp.waitFor();
+				//sendDataResp = controller.getSendDataReq().setNodeId(applicationCommandHandlerResp.nodeId).setPayload(ThermostatSetpointCommand.assembleThermostatSetpointGetReq()).build().send();
+				//sendDataResp.waitFor();
 				// debug
-				System.out.println(Constants.INDENT + sendDataResp.success);
+				//System.out.println(Constants.INDENT + sendDataResp.success);
 			}
 			else if (data instanceof WakeUpIntervalReport) {
 				WakeUpIntervalReport wakeUpIntervalReport = (WakeUpIntervalReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up intercal: " + wakeUpIntervalReport.interval + ", " + wakeUpIntervalReport.scale);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up seconds: " + wakeUpIntervalReport.seconds + ", " + wakeUpIntervalReport.nodeId);
 			}
 			else if (data instanceof WakeUpIntervalCapabilitiesReport) {
 				WakeUpIntervalCapabilitiesReport wakeUpIntervalCapabilitiesReport = (WakeUpIntervalCapabilitiesReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up minInterval: " + wakeUpIntervalCapabilitiesReport.minInterval);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up maxInterval: " + wakeUpIntervalCapabilitiesReport.maxInterval);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up defaultInterval: " + wakeUpIntervalCapabilitiesReport.defaultInterval);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up intervalStep: " + wakeUpIntervalCapabilitiesReport.intervalStep);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up minimum interval seconds: " + wakeUpIntervalCapabilitiesReport.minimumIntervalSeconds);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up maximum interval seconds: " + wakeUpIntervalCapabilitiesReport.maximumIntervalSeconds);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up default interval seconds: " + wakeUpIntervalCapabilitiesReport.defaultIntervalSeconds);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up interval step seconds: " + wakeUpIntervalCapabilitiesReport.intervalStepSeconds);
 			}
-			else if (data instanceof VersionReport) {
-				VersionReport versionReport = (VersionReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version library: " + versionReport.library);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version.protocol: " + versionReport.protocol);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version.application: " + versionReport.application);
+			else if (data instanceof VersionReportV1) {
+				VersionReportV1 versionReport = (VersionReportV1)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " library type: " + versionReport.libraryType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " protocol version: " + versionReport.protocolVersion.string);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " application version: " + versionReport.applicationVersion.string);
+			}
+			else if (data instanceof VersionReportV2) {
+				VersionReportV2 versionReport = (VersionReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " library type: " + versionReport.libraryType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " protocol version: " + versionReport.protocolVersion.string);
+				int idx = 0;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " firmware 0 version: " + versionReport.firmwareVersions.get(idx++).string);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " hardware version: " + versionReport.hardwareVersion);
+				while (idx < versionReport.firmwareVersions.size()) {
+					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " firmware " + idx + " version: " + versionReport.firmwareVersions.get(idx++).string);
+				}
 			}
 			else if (data instanceof UnknownApplicationCommandHandlerData) {
 				UnknownApplicationCommandHandlerData unknownApplicationCommandHandlerData = (UnknownApplicationCommandHandlerData)data;

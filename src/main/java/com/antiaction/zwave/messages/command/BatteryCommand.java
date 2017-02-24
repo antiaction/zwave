@@ -11,8 +11,8 @@ public class BatteryCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.BATTERY.getClassCode() & 255;
 
-	private static final int BATTERY_GET = 0x02;
-	private static final int BATTERY_REPORT = 0x03;
+	public static final int BATTERY_GET = 0x02;
+	public static final int BATTERY_REPORT = 0x03;
 
 	protected BatteryCommand() {
 	}
@@ -30,7 +30,7 @@ public class BatteryCommand {
 		return BATTERY_GET_REQ;
 	}
 
-	public static BatteryReport disassemble(byte[] data) {
+	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;

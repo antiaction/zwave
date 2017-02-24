@@ -14,7 +14,17 @@ Also working on a webapp as a user interface to a Z-Wave network.
 
 ### version 0.2.0-SNAPSHOT ###
 
-Started on a new version after I discovery the Z-Wave API documentation has been made public!
+Started on a new version after I discovered the Z-Wave API documentation has been made public!
+
+* Added Clock command
+* Added Configuration command V1.
+* Added Protection command V1.
+* Added ThermostatSetpoint command.
+* Basic command checked against specifications.
+* Battery command checked against specifications.
+* ManufacturerSpecific command V1 checked against specifications.
+* Version command checked against specifications.
+* WakeUp command checked against specifications.
 
 ### version 0.1.0-SNAPSHOT ###
 Released: 2017-02-16

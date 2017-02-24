@@ -11,9 +11,9 @@ public class BasicCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.BASIC.getClassCode() & 255;
 
-	private static final int BASIC_SET = 0x01;
-	private static final int BASIC_GET = 0x02;
-	private static final int BASIC_REPORT = 0x03;
+	public static final int BASIC_SET = 0x01;
+	public static final int BASIC_GET = 0x02;
+	public static final int BASIC_REPORT = 0x03;
 
 	protected BasicCommand() {
 	}
@@ -31,7 +31,7 @@ public class BasicCommand {
 		return BASIC_REQ;
 	}
 
-	public static Basic disassemble(byte[] data) {
+	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;
@@ -40,9 +40,18 @@ public class BasicCommand {
 				switch (command) {
 				case BASIC_SET:
 				case BASIC_REPORT:
-					Basic basic = new Basic();
-					basic.value = data[idx++] & 255;
-					return basic;
+					if ((data.length - idx) == 1) {
+						BasicReport basicReport = new BasicReport();
+						basicReport.value = data[idx++] & 255;
+						return basicReport;
+					}
+					else {
+						BasicReportV2 basicReport = new BasicReportV2();
+						basicReport.currentValue = data[idx++] & 255;
+						basicReport.targetValue = data[idx++] & 255;
+						basicReport.duration = data[idx++] & 255;
+						return basicReport;
+					}
 				case BASIC_GET:
 				default:
 					break;
@@ -52,8 +61,14 @@ public class BasicCommand {
 		return null;
 	}
 
-	public static class Basic extends ApplicationCommandHandlerData {
+	public static class BasicReport extends ApplicationCommandHandlerData {
 		public int value;
+	}
+
+	public static class BasicReportV2 extends ApplicationCommandHandlerData {
+		public int currentValue;
+		public int targetValue;
+		public int duration;
 	}
 
 }

@@ -26,7 +26,7 @@ public class AlarmCommand {
 		return ALARM_GET_REQ;
 	}
 
-	public static BatteryReport disassemble(byte[] data) {
+	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;

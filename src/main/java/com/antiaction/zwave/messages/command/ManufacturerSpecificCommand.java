@@ -10,12 +10,15 @@ import com.antiaction.zwave.constants.CommandClass;
  * > 0x01 0x0E 0x00 0x04 0x00 0x02 0x08 0x72 0x05 0x00 0x86 0x00 0x02 0x00 0x64 0x68
  * @author nicl
  */
+//TODO Support version 2.
 public class ManufacturerSpecificCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.MANUFACTURER_SPECIFIC.getClassCode() & 255;
 
-	private static final int MANUFACTURER_SPECIFIC_GET = 0x04;
-	private static final int MANUFACTURER_SPECIFIC_REPORT = 0x05;
+	public static final int MANUFACTURER_SPECIFIC_GET = 0x04;
+	public static final int MANUFACTURER_SPECIFIC_REPORT = 0x05;
+	public static final int DEVICE_SPECIFIC_GET_V2 = 0x06;
+	public static final int DEVICE_SPECIFIC_REPORT_V2 = 0x07;
 
 	protected ManufacturerSpecificCommand() {
 	}
@@ -33,7 +36,7 @@ public class ManufacturerSpecificCommand {
 		return MANUFACTURER_SPECIFIC_GET_REQ;
 	}
 
-	public static ManufacturerSpecific disassemble(byte[] data) {
+	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;

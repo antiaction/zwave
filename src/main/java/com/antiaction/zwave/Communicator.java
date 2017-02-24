@@ -18,7 +18,10 @@ import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.command.BasicCommand;
 import com.antiaction.zwave.messages.command.BatteryCommand;
+import com.antiaction.zwave.messages.command.ClockCommand;
+import com.antiaction.zwave.messages.command.ConfigurationCommand;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
+import com.antiaction.zwave.messages.command.ProtectionCommand;
 import com.antiaction.zwave.messages.command.SensorBinaryCommand;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.SwitchBinaryCommand;
@@ -431,12 +434,24 @@ public class Communicator {
 			achData = ThermostatSetpointCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
+		case (byte)0x70:
+			achData = ConfigurationCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
 		case (byte)0x72:
 			achData = ManufacturerSpecificCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
+		case (byte)0x75:
+			achData = ProtectionCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
 		case (byte)0x80:
 			achData = BatteryCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x81:
+			achData = ClockCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x84:
