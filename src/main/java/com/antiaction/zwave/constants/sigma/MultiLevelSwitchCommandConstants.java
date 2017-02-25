@@ -1,0 +1,99 @@
+package com.antiaction.zwave.constants.sigma;
+
+public class MultiLevelSwitchCommandConstants {
+
+	/* Switch Multilevel command class commands */
+	public static final int SWITCH_MULTILEVEL_VERSION = 0x01;
+	public static final int SWITCH_MULTILEVEL_GET = 0x02;
+	public static final int SWITCH_MULTILEVEL_REPORT = 0x03;
+	public static final int SWITCH_MULTILEVEL_SET = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE = 0x04;
+	public static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE = 0x05;
+	/* Values used for Switch Multilevel Start Level Change command */
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_LEVEL_RESERVED1_MASK = 0x1F;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_LEVEL_IGNORE_START_LEVEL_BIT_MASK = 0x20;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_LEVEL_UP_DOWN_BIT_MASK = 0x40;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_LEVEL_RESERVED2_BIT_MASK = 0x80;
+	/* Switch Multilevel command class commands */
+	public static final int SWITCH_MULTILEVEL_VERSION_V2 = 0x02;
+	public static final int SWITCH_MULTILEVEL_GET_V2 = 0x02;
+	public static final int SWITCH_MULTILEVEL_REPORT_V2 = 0x03;
+	public static final int SWITCH_MULTILEVEL_SET_V2 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_V2 = 0x04;
+	public static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE_V2 = 0x05;
+	/* Values used for Switch Multilevel Start Level Change command */
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_RESERVED1_MASK_V2 = 0x1F;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_IGNORE_START_LEVEL_BIT_MASK_V2 = 0x20;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_UP_DOWN_BIT_MASK_V2 = 0x40;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_RESERVED2_BIT_MASK_V2 = 0x80;
+	/* Switch Multilevel command class commands */
+	public static final int SWITCH_MULTILEVEL_VERSION_V3 = 0x03;
+	public static final int SWITCH_MULTILEVEL_GET_V3 = 0x02;
+	public static final int SWITCH_MULTILEVEL_REPORT_V3 = 0x03;
+	public static final int SWITCH_MULTILEVEL_SET_V3 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_V3 = 0x04;
+	public static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE_V3 = 0x05;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_GET_V3 = 0x06;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_V3 = 0x07;
+	/* Values used for Switch Multilevel Start Level Change command */
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_RESERVED_MASK_V3 = 0x07;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_INC_DEC_MASK_V3 = 0x18;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_INC_DEC_SHIFT_V3 = 0x03;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_INCREMENT_V3 = 0x00;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_DECREMENT_V3 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_RESERVED_V3 = 0x02;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_NONE_V3 = 0x03;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_IGNORE_START_LEVEL_BIT_MASK_V3 = 0x20;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_UP_DOWN_MASK_V3 = 0xC0;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_UP_DOWN_SHIFT_V3 = 0x06;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_UP_V3 = 0x00;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_DOWN_V3 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_RESERVED_V3 = 0x02;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_NONE_V3 = 0x03;
+	/* Values used for Switch Multilevel Supported Report command */
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_PRIMARY_SWITCH_TYPE_MASK_V3 = 0x1F;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_RESERVED1_MASK_V3 = 0xE0;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_RESERVED1_SHIFT_V3 = 0x05;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_SECONDARY_SWITCH_TYPE_MASK_V3 = 0x1F;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_RESERVED2_MASK_V3 = 0xE0;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_RESERVED2_SHIFT_V3 = 0x05;
+	/* Switch Multilevel command class commands */
+	public static final int SWITCH_MULTILEVEL_VERSION_V4 = 0x04;
+	public static final int SWITCH_MULTILEVEL_GET_V4 = 0x02;
+	public static final int SWITCH_MULTILEVEL_REPORT_V4 = 0x03;
+	public static final int SWITCH_MULTILEVEL_SET_V4 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_V4 = 0x04;
+	public static final int SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE_V4 = 0x05;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_GET_V4 = 0x06;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_V4 = 0x07;
+	/* Values used for Switch Multilevel Report command */
+	public static final int SWITCH_MULTILEVEL_REPORT_ALREADY_AT_THE_TARGET_VALUE_V4 = 0x00;
+	public static final int SWITCH_MULTILEVEL_REPORT_UNKNOWN_DURATION_V4 = 0xFE;
+	public static final int SWITCH_MULTILEVEL_REPORT_RESERVED_V4 = 0xFF;
+	/* Values used for Switch Multilevel Set command */
+	public static final int SWITCH_MULTILEVEL_SET_INSTANTLY_V4 = 0x00;
+	public static final int SWITCH_MULTILEVEL_SET_DEFAULT_V4 = 0xFF;
+	/* Values used for Switch Multilevel Start Level Change command */
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_RESERVED_MASK_V4 = 0x07;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_INC_DEC_MASK_V4 = 0x18;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_INC_DEC_SHIFT_V4 = 0x03;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_INCREMENT_V4 = 0x00;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_DECREMENT_V4 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_RESERVED_V4 = 0x02;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_INC_DEC_NONE_V4 = 0x03;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_IGNORE_START_LEVEL_BIT_MASK_V4 = 0x20;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_UP_DOWN_MASK_V4 = 0xC0;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_PROPERTIES1_UP_DOWN_SHIFT_V4 = 0x06;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_UP_V4 = 0x00;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_DOWN_V4 = 0x01;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_RESERVED_V4 = 0x02;
+	public static final int SWITCH_MULTILEVEL_START_LEVEL_CHANGE_UP_DOWN_NONE_V4 = 0x03;
+	/* Values used for Switch Multilevel Supported Report command */
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_PRIMARY_SWITCH_TYPE_MASK_V4 = 0x1F;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_RESERVED1_MASK_V4 = 0xE0;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES1_RESERVED1_SHIFT_V4 = 0x05;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_SECONDARY_SWITCH_TYPE_MASK_V4 = 0x1F;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_RESERVED2_MASK_V4 = 0xE0;
+	public static final int SWITCH_MULTILEVEL_SUPPORTED_REPORT_PROPERTIES2_RESERVED2_SHIFT_V4 = 0x05;
+
+}

@@ -25,7 +25,7 @@ import com.antiaction.zwave.messages.command.ProtectionCommand;
 import com.antiaction.zwave.messages.command.BinarySensorCommand;
 import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
 import com.antiaction.zwave.messages.command.BinarySwitchCommand;
-import com.antiaction.zwave.messages.command.SwitchMultiLevelCommand;
+import com.antiaction.zwave.messages.command.MultiLevelSwitchCommand;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
 import com.antiaction.zwave.messages.command.VersionCommand;
 import com.antiaction.zwave.messages.command.WakeUpCommand;
@@ -419,7 +419,7 @@ public class Communicator {
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x26:
-			achData = SwitchMultiLevelCommand.disassemble(data);
+			achData = MultiLevelSwitchCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x30:
