@@ -21,13 +21,25 @@ import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDat
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.command.BasicCommand.BasicReport;
+import com.antiaction.zwave.messages.command.BasicCommand.BasicReportV2;
 import com.antiaction.zwave.messages.command.BatteryCommand.BatteryReport;
+import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReport;
+import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReportV2;
+import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorSupportedSensorReport;
+import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReport;
+import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReportV2;
+import com.antiaction.zwave.messages.command.ClockCommand.ClockReport;
+import com.antiaction.zwave.messages.command.ConfigurationCommand.ConfigurationReport;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
-import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
-import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelReport;
-import com.antiaction.zwave.messages.command.SensorMultiLevelCommand.SensorMultiLevelSupportedReport;
-import com.antiaction.zwave.messages.command.BinarySwitchCommand.SwitchBinaryReport;
-import com.antiaction.zwave.messages.command.MultiLevelSwitchCommand.SwitchMultiLevelReport;
+import com.antiaction.zwave.messages.command.MultiLevelSensorCommand;
+import com.antiaction.zwave.messages.command.MultiLevelSensorCommand.MultiLevelSensorReport;
+import com.antiaction.zwave.messages.command.MultiLevelSensorCommand.MultiLevelSensorSupportedSensorReport;
+import com.antiaction.zwave.messages.command.MultiLevelSwitchCommand.MultiLevelSwitchReport;
+import com.antiaction.zwave.messages.command.ProtectionCommand.ProtectionReport;
+import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointCapabilitiesReportV3;
+import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointReport;
+import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointSupportedReport;
+import com.antiaction.zwave.messages.command.VersionCommand.VersionCommandClassReport;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV1;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV2;
 import com.antiaction.zwave.messages.command.WakeUpCommand.WakeUpIntervalCapabilitiesReport;
@@ -306,31 +318,31 @@ public class TestZWave implements ApplicationListener {
 		sleep(10000);
 		*/
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelSupportedGetReq()).build().send();
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(MultiLevelSensorCommand.assembleSensorMultiLevelSupportedGetReqSensorV5()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x01)).build().send();
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(MultiLevelSensorCommand.assembleSensorMultiLevelGetReqV5(0x01, 0)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x03)).build().send();
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(MultiLevelSensorCommand.assembleSensorMultiLevelGetReqV5(0x03, 0)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x05)).build().send();
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(MultiLevelSensorCommand.assembleSensorMultiLevelGetReqV5(0x05, 0)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(SensorMultiLevelCommand.assembleSensorMultiLevelGetReq(0x1B)).build().send();
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(MultiLevelSensorCommand.assembleSensorMultiLevelGetReqV5(0x1B, 0)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
@@ -448,6 +460,7 @@ public class TestZWave implements ApplicationListener {
 		//controller.queueOut.insert(FrameUtils.assemble(MessageType.Request, data));
 	}
 
+	@SuppressWarnings("deprecation")
 	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
 		ApplicationCommandHandlerData data = applicationCommandHandlerResp.data;
 		if (data != null) {
@@ -455,26 +468,49 @@ public class TestZWave implements ApplicationListener {
 				BasicReport basicResp = (BasicReport)data;
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic value: " + basicResp.value);
 			}
-			else if (data instanceof SwitchBinaryReport) {
-				SwitchBinaryReport switchBinaryReport = (SwitchBinaryReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary value: " + switchBinaryReport.value);
+			else if (data instanceof BasicReportV2) {
+				BasicReportV2 basicResp = (BasicReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic current value: " + basicResp.currentValue);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic target value: " + basicResp.targetValue);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic duration: " + basicResp.duration);
 			}
-			else if (data instanceof SwitchMultiLevelReport) {
-				SwitchMultiLevelReport switchMultiLevelReport = (SwitchMultiLevelReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " multilevel value: " + switchMultiLevelReport.value);
+			else if (data instanceof BatteryReport) {
+				BatteryReport batteryResp = (BatteryReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " battery level: " + batteryResp.level + "%");
 			}
-			else if (data instanceof SensorMultiLevelSupportedReport) {
-				SensorMultiLevelSupportedReport sensorMultiLevelSupportedReport = (SensorMultiLevelSupportedReport)data;
-				Iterator<SensorType> sensorTypesIter = sensorMultiLevelSupportedReport.supportedSensorTypeList.iterator();
-				SensorType sensorType;
-				while (sensorTypesIter.hasNext()) {
-					sensorType = sensorTypesIter.next();
-					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorType.getId()) + ")");
-				}
+			else if (data instanceof BinarySensorReport) {
+				BinarySensorReport binarySensorResp = (BinarySensorReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary sensor value: " + binarySensorResp.sensorValue);
 			}
-			else if (data instanceof SensorMultiLevelReport) {
-				SensorMultiLevelReport sensorMultiLevelReport = (SensorMultiLevelReport)data;
-		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorMultiLevelReport.sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorMultiLevelReport.sensorType.getId()) + ") = " + sensorMultiLevelReport.value.toPlainString());
+			else if (data instanceof BinarySensorReportV2) {
+				BinarySensorReportV2 binarySensorResp = (BinarySensorReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary sensor value: " + binarySensorResp.sensorValue);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary sensor type: " + binarySensorResp.sensorType);
+			}
+			else if (data instanceof BinarySensorSupportedSensorReport) {
+				BinarySensorSupportedSensorReport binarySensorSupportedSensorResp = (BinarySensorSupportedSensorReport)data;
+				// TODO
+			}
+			else if (data instanceof BinarySwitchReport) {
+				BinarySwitchReport switchBinaryReport = (BinarySwitchReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary switch value: " + switchBinaryReport.value);
+			}
+			else if (data instanceof BinarySwitchReportV2) {
+				BinarySwitchReportV2 switchBinaryReport = (BinarySwitchReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary switch curremt value: " + switchBinaryReport.currentValue);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary switch target value: " + switchBinaryReport.targetValue);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " binary switch duration: " + switchBinaryReport.duration);
+			}
+			else if (data instanceof ClockReport) {
+				ClockReport clockReport = (ClockReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " clock weekday: " + clockReport.weekday);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " clock hour: " + clockReport.hour);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " clock minute: " + clockReport.minute);
+			}
+			else if (data instanceof ConfigurationReport) {
+				ConfigurationReport configurationReport = (ConfigurationReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " configuration number: " + configurationReport.parameterNumber);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " configuration value: " + configurationReport.value.value);
 			}
 			else if (data instanceof ManufacturerSpecific) {
 				ManufacturerSpecific manufacturerSpecificResp = (ManufacturerSpecific)data;
@@ -482,9 +518,68 @@ public class TestZWave implements ApplicationListener {
 		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "    deviceType: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceType));
 		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "      deviceId: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceId));
 			}
-			else if (data instanceof BatteryReport) {
-				BatteryReport batteryResp = (BatteryReport)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " battery level: " + batteryResp.level + "%");
+			else if (data instanceof MultiLevelSensorReport) {
+				MultiLevelSensorReport sensorMultiLevelReport = (MultiLevelSensorReport)data;
+				if (sensorMultiLevelReport.sensorScale != null) {
+			        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorMultiLevelReport.sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorMultiLevelReport.sensorType.getId()) + ") = " + sensorMultiLevelReport.value.toPlainString() + " " + sensorMultiLevelReport.sensorScale.getUnit());
+				}
+				else {
+			        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorMultiLevelReport.sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorMultiLevelReport.sensorType.getId()) + ") = " + sensorMultiLevelReport.value.toPlainString());
+				}
+			}
+			else if (data instanceof MultiLevelSensorSupportedSensorReport) {
+				MultiLevelSensorSupportedSensorReport sensorMultiLevelSupportedReport = (MultiLevelSensorSupportedSensorReport)data;
+				Iterator<SensorType> sensorTypesIter = sensorMultiLevelSupportedReport.supportedSensorTypeList.iterator();
+				SensorType sensorType;
+				while (sensorTypesIter.hasNext()) {
+					sensorType = sensorTypesIter.next();
+					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " SensorType: " + sensorType.getLabel() + "(" + HexUtils.byteToHexString(sensorType.getId()) + ")");
+				}
+			}
+			else if (data instanceof MultiLevelSwitchReport) {
+				MultiLevelSwitchReport switchMultiLevelReport = (MultiLevelSwitchReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " multilevel switch value: " + switchMultiLevelReport.value);
+			}
+			else if (data instanceof ProtectionReport) {
+				ProtectionReport protectionlReport = (ProtectionReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " protection state: " + protectionlReport.protectionState);
+			}
+			else if (data instanceof ThermostatSetpointReport) {
+				ThermostatSetpointReport thermostatSetpointReport = (ThermostatSetpointReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " thermostat setpoint type: " + thermostatSetpointReport.setpointType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " thermostat setpoint value: " + thermostatSetpointReport.value.value);
+			}
+			else if (data instanceof ThermostatSetpointSupportedReport) {
+				ThermostatSetpointSupportedReport thermostatSetpointSupportedReport = (ThermostatSetpointSupportedReport)data;
+				// TODO
+			}
+			else if (data instanceof ThermostatSetpointCapabilitiesReportV3) {
+				ThermostatSetpointCapabilitiesReportV3 thermostatSetpointReport = (ThermostatSetpointCapabilitiesReportV3)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " thermostat setpoint type: " + thermostatSetpointReport.setpointType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " thermostat setpoint min value: " + thermostatSetpointReport.minValue.value);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " thermostat setpoint max value: " + thermostatSetpointReport.maxValue.value);
+			}
+			else if (data instanceof VersionReportV1) {
+				VersionReportV1 versionReport = (VersionReportV1)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version library type: " + versionReport.libraryType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version protocol version: " + versionReport.protocolVersion.string);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version application version: " + versionReport.applicationVersion.string);
+			}
+			else if (data instanceof VersionReportV2) {
+				VersionReportV2 versionReport = (VersionReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version library type: " + versionReport.libraryType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version protocol version: " + versionReport.protocolVersion.string);
+				int idx = 0;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version firmware 0 version: " + versionReport.firmwareVersions.get(idx++).string);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version hardware version: " + versionReport.hardwareVersion);
+				while (idx < versionReport.firmwareVersions.size()) {
+					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version firmware " + idx + " version: " + versionReport.firmwareVersions.get(idx++).string);
+				}
+			}
+			else if (data instanceof VersionCommandClassReport) {
+				VersionCommandClassReport versionCommandClassReport = (VersionCommandClassReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version command class: " + versionCommandClassReport.requestedCommandClass);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " version class version: " + versionCommandClassReport.commandClassVersion);
 			}
 			else if (data instanceof WakeUpNotification) {
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up notification");
@@ -514,23 +609,6 @@ public class TestZWave implements ApplicationListener {
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up maximum interval seconds: " + wakeUpIntervalCapabilitiesReport.maximumIntervalSeconds);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up default interval seconds: " + wakeUpIntervalCapabilitiesReport.defaultIntervalSeconds);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up interval step seconds: " + wakeUpIntervalCapabilitiesReport.intervalStepSeconds);
-			}
-			else if (data instanceof VersionReportV1) {
-				VersionReportV1 versionReport = (VersionReportV1)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " library type: " + versionReport.libraryType);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " protocol version: " + versionReport.protocolVersion.string);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " application version: " + versionReport.applicationVersion.string);
-			}
-			else if (data instanceof VersionReportV2) {
-				VersionReportV2 versionReport = (VersionReportV2)data;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " library type: " + versionReport.libraryType);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " protocol version: " + versionReport.protocolVersion.string);
-				int idx = 0;
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " firmware 0 version: " + versionReport.firmwareVersions.get(idx++).string);
-				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " hardware version: " + versionReport.hardwareVersion);
-				while (idx < versionReport.firmwareVersions.size()) {
-					System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " firmware " + idx + " version: " + versionReport.firmwareVersions.get(idx++).string);
-				}
 			}
 			else if (data instanceof UnknownApplicationCommandHandlerData) {
 				UnknownApplicationCommandHandlerData unknownApplicationCommandHandlerData = (UnknownApplicationCommandHandlerData)data;

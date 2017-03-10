@@ -3,6 +3,8 @@ package com.antiaction.zwave.messages.command;
 import com.antiaction.zwave.constants.CommandClass;
 
 @Deprecated
+// TODO Bitmask.
+// TODO SensorType.
 public class BinarySensorCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SENSOR_BINARY.getClassCode() & 255;

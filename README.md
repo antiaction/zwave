@@ -16,6 +16,13 @@ Also working on a webapp as a user interface to a Z-Wave network.
 
 Started on a new version after I discovered the Z-Wave API documentation has been made public!
 
+* MultiLevelSensor command class checked against specifications.
+* SensorType class completely rewritten and updated with all the correct types and scales.
+* ConfigurationValue moved to separate class.
+* ThermostatSetpointValue moved to separate class.
+* Renamed SensorBinary and SensorMultiLevel classes to BinarySensor and MultiLevelSensor classes.
+* Added some more official contants so the implemented classes also have corresponding constants classes.
+* BinarySwitch, BinarySensor and MultiLevelSwitch checked against specifications.
 * Added Clock command
 * Added Configuration command V1.
 * Added Protection command V1.

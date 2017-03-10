@@ -77,20 +77,8 @@ public class ConfigurationCommand {
 				case CONFIGURATION_REPORT:
 					ConfigurationReport configurationReport = new ConfigurationReport();
 					configurationReport.parameterNumber = data[idx++] & 255;
-					configurationReport.size = data[idx++] & CONFIGURATION_SIZE_MASK;
-					switch (configurationReport.size) {
-					case 4:
-						configurationReport.value = data[idx++] << 24 | (data[idx++] & 255) << 16 | (data[idx++] & 255) << 8 | (data[idx++] & 255);
-						break;
-					case 2:
-						configurationReport.value = data[idx++] << 8 | (data[idx++] & 255);
-						break;
-					case 1:
-						configurationReport.value = data[idx++];
-						break;
-					default:
-						break;
-					}
+					configurationReport.value = ConfigurationValue.disassemble(data, idx);
+					//idx += configurationReport.value.size + 1;
 					return configurationReport;
 				case CONFIGURATION_SET:
 				case CONFIGURATION_GET:
@@ -104,8 +92,7 @@ public class ConfigurationCommand {
 
 	public static class ConfigurationReport extends ApplicationCommandHandlerData {
 		public int parameterNumber;
-		public int size;
-		public int value;
+		public ConfigurationValue value;
 	}
 
 }

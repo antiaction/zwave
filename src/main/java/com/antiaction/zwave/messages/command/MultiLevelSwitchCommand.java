@@ -95,7 +95,7 @@ public class MultiLevelSwitchCommand {
 			if (commandClass == COMMAND_CLASS) {
 				switch (command) {
 				case SWITCH_MULTILEVEL_REPORT:
-					SwitchMultiLevelReport switchMultiLevelReport = new SwitchMultiLevelReport();
+					MultiLevelSwitchReport switchMultiLevelReport = new MultiLevelSwitchReport();
 					switchMultiLevelReport.value = data[idx++];
 					return switchMultiLevelReport;
 				case SWITCH_MULTILEVEL_SUPPORTED_REPORT_V3:
@@ -112,7 +112,7 @@ public class MultiLevelSwitchCommand {
 		return null;
 	}
 
-	public static class SwitchMultiLevelReport extends ApplicationCommandHandlerData {
+	public static class MultiLevelSwitchReport extends ApplicationCommandHandlerData {
 		public int value;
 	}
 

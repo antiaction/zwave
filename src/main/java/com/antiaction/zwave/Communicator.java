@@ -15,17 +15,19 @@ import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.MessageType;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
+import com.antiaction.zwave.messages.command.AlarmCommand;
 import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.command.BasicCommand;
 import com.antiaction.zwave.messages.command.BatteryCommand;
+import com.antiaction.zwave.messages.command.BinarySensorCommand;
+import com.antiaction.zwave.messages.command.BinarySwitchCommand;
+import com.antiaction.zwave.messages.command.ClimateControlScheduleCommand;
 import com.antiaction.zwave.messages.command.ClockCommand;
 import com.antiaction.zwave.messages.command.ConfigurationCommand;
 import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
-import com.antiaction.zwave.messages.command.ProtectionCommand;
-import com.antiaction.zwave.messages.command.BinarySensorCommand;
-import com.antiaction.zwave.messages.command.SensorMultiLevelCommand;
-import com.antiaction.zwave.messages.command.BinarySwitchCommand;
+import com.antiaction.zwave.messages.command.MultiLevelSensorCommand;
 import com.antiaction.zwave.messages.command.MultiLevelSwitchCommand;
+import com.antiaction.zwave.messages.command.ProtectionCommand;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
 import com.antiaction.zwave.messages.command.VersionCommand;
 import com.antiaction.zwave.messages.command.WakeUpCommand;
@@ -427,15 +429,23 @@ public class Communicator {
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x31:
-			achData = SensorMultiLevelCommand.disassemble(data);
+			achData = MultiLevelSensorCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x43:
 			achData = ThermostatSetpointCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
+		case (byte)0x46:
+			achData = ClimateControlScheduleCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
 		case (byte)0x70:
 			achData = ConfigurationCommand.disassemble(data);
+			applicationCommandHandlerResp.data = achData;
+			break;
+		case (byte)0x71:
+			achData = AlarmCommand.disassemble(data);
 			applicationCommandHandlerResp.data = achData;
 			break;
 		case (byte)0x72:

@@ -8,6 +8,7 @@ import com.antiaction.zwave.constants.CommandClass;
  * 
  * @author nicl
  */
+// TODO Bitmask.
 public class ThermostatSetpointCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.THERMOSTAT_SETPOINT.getClassCode() & 255;
@@ -150,34 +151,6 @@ public class ThermostatSetpointCommand {
 			}
 		}
 		return null;
-	}
-
-	public static class ThermostatSetpointValue {
-		public int precision;
-		public int scale;
-		public int size;
-		public int value;
-		public static ThermostatSetpointValue disassemble(byte[] data, int idx) {
-			ThermostatSetpointValue tsv = new ThermostatSetpointValue();
-			tsv.precision = (data[idx] & THERMOSTAT_SETPOINT_PRECISION_MASK) >> THERMOSTAT_SETPOINT_PRECISION_SHIFT;
-			tsv.scale = (data[idx] & THERMOSTAT_SETPOINT_SCALE_MASK) >> THERMOSTAT_SETPOINT_SCALE_SHIFT;
-			tsv.size = data[idx] & THERMOSTAT_SETPOINT_SIZE_MASK;
-			++idx;
-			switch (tsv.size) {
-			case 4:
-				tsv.value = data[idx++] << 24 | (data[idx++] & 255) << 16 | (data[idx++] & 255) << 8 | (data[idx++] & 255);
-				break;
-			case 2:
-				tsv.value = data[idx++] << 8 | (data[idx++] & 255);
-				break;
-			case 1:
-				tsv.value = data[idx++];
-				break;
-			default:
-				break;
-			}
-			return tsv;
-		}
 	}
 
 	public static class ThermostatSetpointReport extends ApplicationCommandHandlerData {

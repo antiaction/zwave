@@ -54,12 +54,12 @@ public class BinarySwitchCommand {
 				switch (command) {
 				case SWITCH_BINARY_REPORT:
 					if ((data.length - idx) == 1) {
-						SwitchBinaryReport binarySwitchReport = new SwitchBinaryReport();
+						BinarySwitchReport binarySwitchReport = new BinarySwitchReport();
 						binarySwitchReport.value = data[idx++] & 255;
 						return binarySwitchReport;
 					}
 					else {
-						SwitchBinaryReportV2 binarySwitchReport = new SwitchBinaryReportV2();
+						BinarySwitchReportV2 binarySwitchReport = new BinarySwitchReportV2();
 						binarySwitchReport.currentValue = data[idx++] & 255;
 						binarySwitchReport.targetValue = data[idx++] & 255;
 						binarySwitchReport.duration = data[idx++] & 255;
@@ -75,11 +75,11 @@ public class BinarySwitchCommand {
 		return null;
 	}
 
-	public static class SwitchBinaryReport extends ApplicationCommandHandlerData {
+	public static class BinarySwitchReport extends ApplicationCommandHandlerData {
 		public int value;
 	}
 
-	public static class SwitchBinaryReportV2 extends ApplicationCommandHandlerData {
+	public static class BinarySwitchReportV2 extends ApplicationCommandHandlerData {
 		public int currentValue;
 		public int targetValue;
 		public int duration;
