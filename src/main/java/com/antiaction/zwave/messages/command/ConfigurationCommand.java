@@ -1,6 +1,7 @@
 package com.antiaction.zwave.messages.command;
 
 import com.antiaction.zwave.constants.CommandClass;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
 // TODO Support more versions...
 public class ConfigurationCommand {

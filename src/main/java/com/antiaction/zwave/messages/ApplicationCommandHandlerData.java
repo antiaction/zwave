@@ -1,4 +1,4 @@
-package com.antiaction.zwave.messages.command;
+package com.antiaction.zwave.messages;
 
 public class ApplicationCommandHandlerData {
 

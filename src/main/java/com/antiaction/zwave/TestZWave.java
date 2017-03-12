@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.antiaction.zwave.Communicator.UnknownApplicationCommandHandlerData;
 import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.GenericDeviceClass;
 import com.antiaction.zwave.constants.SensorType;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
 import com.antiaction.zwave.messages.GetCapabilitiesReq.GetCapabilitiesResp;
@@ -19,13 +19,13 @@ import com.antiaction.zwave.messages.MemoryGetIdReq.MemoryGetIdResp;
 import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
-import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
 import com.antiaction.zwave.messages.command.BasicCommand.BasicReport;
 import com.antiaction.zwave.messages.command.BasicCommand.BasicReportV2;
 import com.antiaction.zwave.messages.command.BatteryCommand.BatteryReport;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReport;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReportV2;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorSupportedSensorReport;
+import com.antiaction.zwave.messages.command.BinarySwitchCommand;
 import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReport;
 import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReportV2;
 import com.antiaction.zwave.messages.command.ClockCommand.ClockReport;
@@ -39,6 +39,7 @@ import com.antiaction.zwave.messages.command.ProtectionCommand.ProtectionReport;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointCapabilitiesReportV3;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointReport;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointSupportedReport;
+import com.antiaction.zwave.messages.command.UnknownCommand;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionCommandClassReport;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV1;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV2;
@@ -193,15 +194,29 @@ public class TestZWave implements ApplicationListener {
 		sleep(10000);
 
 		/*
-		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
+		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setParameter(parameter).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
 
-		parameter = new Parameter((byte)0x20, new byte[] {(byte)0xFF});
-		sendDataResp = controller.getSendDataReq().setNodeId(2).setParameter(parameter).build().send();
+		parameter = new Parameter((byte)0x20, new byte[] {(byte)0x00});
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setParameter(parameter).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+		*/
+
+		/*
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BinarySwitchCommand.assembleSwitchBinarySetReq(0xff)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+
+		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(BinarySwitchCommand.assembleSwitchBinarySetReq(0x00)).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
@@ -610,8 +625,8 @@ public class TestZWave implements ApplicationListener {
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up default interval seconds: " + wakeUpIntervalCapabilitiesReport.defaultIntervalSeconds);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " wake up interval step seconds: " + wakeUpIntervalCapabilitiesReport.intervalStepSeconds);
 			}
-			else if (data instanceof UnknownApplicationCommandHandlerData) {
-				UnknownApplicationCommandHandlerData unknownApplicationCommandHandlerData = (UnknownApplicationCommandHandlerData)data;
+			else if (data instanceof UnknownCommand) {
+				UnknownCommand unknownApplicationCommandHandlerData = (UnknownCommand)data;
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " unsupported data: " + HexUtils.byteArrayToHexString(unknownApplicationCommandHandlerData.data));
 			}
 		}

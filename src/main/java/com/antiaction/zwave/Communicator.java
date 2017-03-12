@@ -15,22 +15,7 @@ import com.antiaction.zwave.constants.Constants;
 import com.antiaction.zwave.constants.MessageType;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerResp;
 import com.antiaction.zwave.messages.ApplicationUpdateResp;
-import com.antiaction.zwave.messages.command.AlarmCommand;
-import com.antiaction.zwave.messages.command.ApplicationCommandHandlerData;
-import com.antiaction.zwave.messages.command.BasicCommand;
-import com.antiaction.zwave.messages.command.BatteryCommand;
-import com.antiaction.zwave.messages.command.BinarySensorCommand;
-import com.antiaction.zwave.messages.command.BinarySwitchCommand;
-import com.antiaction.zwave.messages.command.ClimateControlScheduleCommand;
-import com.antiaction.zwave.messages.command.ClockCommand;
-import com.antiaction.zwave.messages.command.ConfigurationCommand;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
-import com.antiaction.zwave.messages.command.MultiLevelSensorCommand;
-import com.antiaction.zwave.messages.command.MultiLevelSwitchCommand;
-import com.antiaction.zwave.messages.command.ProtectionCommand;
-import com.antiaction.zwave.messages.command.ThermostatSetpointCommand;
-import com.antiaction.zwave.messages.command.VersionCommand;
-import com.antiaction.zwave.messages.command.WakeUpCommand;
+import com.antiaction.zwave.messages.command.Command;
 import com.antiaction.zwave.transport.SerialTransport;
 
 public class Communicator {
@@ -407,77 +392,7 @@ public class Communicator {
 		// debug
 		//System.out.println("ApplicationCommandHandlerResp nodeId: " + applicationCommandHandlerResp.nodeId + " CommandClass: " + commandClassStr );
 
-		byte[] data = applicationCommandHandlerResp.payload;
-		ApplicationCommandHandlerData achData;
-
-		// CommandClass.
-		switch (data[0]) {
-		case (byte)0x20:
-			achData = BasicCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x25:
-			achData = BinarySwitchCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x26:
-			achData = MultiLevelSwitchCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x30:
-			achData = BinarySensorCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x31:
-			achData = MultiLevelSensorCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x43:
-			achData = ThermostatSetpointCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x46:
-			achData = ClimateControlScheduleCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x70:
-			achData = ConfigurationCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x71:
-			achData = AlarmCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x72:
-			achData = ManufacturerSpecificCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x75:
-			achData = ProtectionCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x80:
-			achData = BatteryCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x81:
-			achData = ClockCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x84:
-			achData = WakeUpCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		case (byte)0x86:
-			achData = VersionCommand.disassemble(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		default:
-			achData = new UnknownApplicationCommandHandlerData(data);
-			applicationCommandHandlerResp.data = achData;
-			break;
-		}
-
+		applicationCommandHandlerResp.data = Command.disassemble(applicationCommandHandlerResp);
 		queueApplicationCommandHandler.insert(applicationCommandHandlerResp);
 	}
 
@@ -508,13 +423,6 @@ public class Communicator {
 			catch (Throwable t) {
 				t.printStackTrace();
 			}
-		}
-	}
-
-	public static class UnknownApplicationCommandHandlerData extends ApplicationCommandHandlerData {
-		public byte[] data;
-		public UnknownApplicationCommandHandlerData(byte[] data) {
-			this.data = data;
 		}
 	}
 

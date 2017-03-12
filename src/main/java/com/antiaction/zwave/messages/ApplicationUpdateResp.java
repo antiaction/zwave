@@ -1,7 +1,6 @@
 package com.antiaction.zwave.messages;
 
 import com.antiaction.zwave.FrameUtils;
-import com.antiaction.zwave.messages.command.ApplicationUpdateData;
 
 /**
  * TODO

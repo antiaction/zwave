@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.constants.SensorScale;
 import com.antiaction.zwave.constants.SensorType;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
 /**
  * 
@@ -88,7 +89,6 @@ public class MultiLevelSensorCommand {
 
 	public static ApplicationCommandHandlerData disassemble(byte[] data) {
 		Optional<SensorType> sensorType;
-		Optional<SensorScale> sensorScale;
 		if (data.length >= 2) {
 			int idx = 0;
 			int commandClass = data[idx++] & 255;

@@ -1,6 +1,7 @@
 package com.antiaction.zwave.messages.command;
 
 import com.antiaction.zwave.constants.CommandClass;
+import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
 /**
  * > 0x01 0x09 0x00 0x04 0x00 0x02 0x03 0x20 0x01 0xFF 0x2D
