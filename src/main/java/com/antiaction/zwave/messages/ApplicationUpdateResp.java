@@ -1,6 +1,18 @@
 package com.antiaction.zwave.messages;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.antiaction.zwave.FrameUtils;
+import com.antiaction.zwave.constants.BasicDeviceClass;
+import com.antiaction.zwave.constants.CommandClass;
+import com.antiaction.zwave.constants.GenericDeviceClass;
+import com.antiaction.zwave.constants.SpecificDeviceClass;
 
 /**
  * TODO
@@ -17,7 +29,19 @@ public class ApplicationUpdateResp {
 
 	public byte[] payload;
 
-	public ApplicationUpdateData data;
+	//public ApplicationUpdateData data;
+
+	public BasicDeviceClass basicDeviceClass;
+
+	public GenericDeviceClass genericDeviceClass;
+
+	public Optional<SpecificDeviceClass> optionalSpecificClass;
+
+	public Set<Integer> supportedCommandClassSet = new TreeSet<Integer>();
+
+	public List<CommandClass> supportedCommandClassList = new LinkedList<CommandClass>();;
+
+	public List<Integer> unsupportedCommandClassList = new LinkedList<Integer>();;
 
 	protected ApplicationUpdateResp() {
 	}
@@ -35,6 +59,35 @@ public class ApplicationUpdateResp {
 		int len = data[idx++] & 255;
 		payload = new byte[len];
 		System.arraycopy(data, idx, payload, 0, len);
+		// Diassemble payload.
+		basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
+		genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
+		optionalSpecificClass = SpecificDeviceClass.getType(genericDeviceClass, data[idx++] & 255);
+		int commandClassId;
+		Optional<CommandClass> optionalCommandClass; 
+		while (idx < data.length) {
+			commandClassId = data[idx++] & 255;
+			if (!supportedCommandClassSet.contains(commandClassId)) {
+				supportedCommandClassSet.add(commandClassId);
+				optionalCommandClass = CommandClass.getType(commandClassId);
+				if (optionalCommandClass.isPresent()) {
+					supportedCommandClassList.add(optionalCommandClass.get());
+				}
+				else {
+					unsupportedCommandClassList.add(commandClassId);
+				}
+			}
+		}
+		Collections.sort(supportedCommandClassList, commandClassComparator);
+	}
+
+	public static Comparator<CommandClass> commandClassComparator = new CommandClassComparator();
+
+	public static class CommandClassComparator implements Comparator<CommandClass> {
+		@Override
+		public int compare(CommandClass o1, CommandClass o2) {
+			return o1.getLabel().compareTo(o2.getLabel());
+		}
 	}
 
 }

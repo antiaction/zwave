@@ -16,6 +16,8 @@ Also working on a webapp as a user interface to a Z-Wave network.
 
 Started on a new version after I discovered the Z-Wave API documentation has been made public!
 
+* Alarm command implemented.
+* MultiCmd command partially implemented.
 * MultiLevelSensor command class checked against specifications.
 * SensorType class completely rewritten and updated with all the correct types and scales.
 * ConfigurationValue moved to separate class.

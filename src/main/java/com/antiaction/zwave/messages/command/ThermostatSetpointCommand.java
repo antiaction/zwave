@@ -9,7 +9,6 @@ import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
  * 
  * @author nicl
  */
-// TODO Bitmask.
 public class ThermostatSetpointCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.THERMOSTAT_SETPOINT.getClassCode() & 255;
@@ -132,6 +131,7 @@ public class ThermostatSetpointCommand {
 				case THERMOSTAT_SETPOINT_SUPPORTED_REPORT:
 					ThermostatSetpointSupportedReport thermostatSetpointSupportedReport = new ThermostatSetpointSupportedReport();
 					thermostatSetpointSupportedReport.bitmask = new byte[data.length - idx];
+					// TODO Bitmask.
 					System.arraycopy(data, idx, thermostatSetpointSupportedReport.bitmask, 0, data.length - idx);
 					return thermostatSetpointSupportedReport;
 				case THERMOSTAT_SETPOINT_CAPABILITIES_REPORT_V3:

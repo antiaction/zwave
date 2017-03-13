@@ -4,7 +4,6 @@ import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
 @Deprecated
-// TODO Bitmask.
 // TODO SensorType.
 public class BinarySensorCommand {
 
@@ -75,6 +74,7 @@ public class BinarySensorCommand {
 				case SENSOR_BINARY_SUPPORTED_SENSOR_REPORT_V2:
 					BinarySensorSupportedSensorReport binarySensorSupportedSensorReport = new BinarySensorSupportedSensorReport();
 					binarySensorSupportedSensorReport.bitmask = new byte[data.length - idx];
+					// TODO Bitmask.
 					System.arraycopy(data, idx, binarySensorSupportedSensorReport.bitmask, 0, data.length - idx);
 					return binarySensorSupportedSensorReport;
 				case SENSOR_BINARY_GET:

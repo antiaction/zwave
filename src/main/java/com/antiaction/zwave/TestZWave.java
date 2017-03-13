@@ -471,6 +471,20 @@ public class TestZWave implements ApplicationListener {
 	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
 		// debug
 		System.out.println("ApplicationUpdate nodeId: " + applicationUpdateResp.nodeId);
+		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "      basicDeviceClass: " + applicationUpdateResp.basicDeviceClass.getLabel());
+		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "    genericDeviceClass: " + applicationUpdateResp.genericDeviceClass.getLabel());
+		if (applicationUpdateResp.optionalSpecificClass.isPresent()) {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: " + applicationUpdateResp.optionalSpecificClass.get().getLabel());
+		}
+		else {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: Unknown");
+		}
+		Iterator<CommandClass> iter = applicationUpdateResp.supportedCommandClassList.iterator();
+		CommandClass commandClass;
+		while (iter.hasNext()) {
+			commandClass = iter.next();
+			System.out.println(commandClass.getLabel());
+		}
 		//byte[] data = new byte[] {(byte)0x13, (byte)applicationUpdateResp.nodeId, (byte)0x06, (byte)0x84, (byte)0x04, (byte)0x00, (byte)0x01, (byte)0x68, (byte)0x01, (byte)0x05, (byte)0x03};
 		//controller.queueOut.insert(FrameUtils.assemble(MessageType.Request, data));
 	}

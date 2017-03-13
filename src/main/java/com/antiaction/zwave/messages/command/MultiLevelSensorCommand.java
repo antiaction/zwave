@@ -23,7 +23,6 @@ import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
  * @author nicl
  *
  */
-// TODO Bitmask.
 public class MultiLevelSensorCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.SENSOR_MULTILEVEL.getClassCode() & 255;
@@ -136,6 +135,7 @@ public class MultiLevelSensorCommand {
 					return sensorMultiLevelSupportedReport;
 				case SENSOR_MULTILEVEL_SUPPORTED_SCALE_REPORT_V5:
 					SensorMultiLevelSupportedScaleReport sensorMultiLevelSupportedScaleReport = new SensorMultiLevelSupportedScaleReport();
+					// TODO Bitmask.
 					sensorMultiLevelSupportedScaleReport.scaleBitMask = data[idx++] & 255;
 					return sensorMultiLevelSupportedScaleReport;
 				case SENSOR_MULTILEVEL_GET:
