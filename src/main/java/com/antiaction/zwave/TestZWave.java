@@ -19,18 +19,21 @@ import com.antiaction.zwave.messages.MemoryGetIdReq.MemoryGetIdResp;
 import com.antiaction.zwave.messages.SendDataReq.SendDataResp;
 import com.antiaction.zwave.messages.SerialApiGetInitDataReq.SerialApiGetInitDataResp;
 import com.antiaction.zwave.messages.SetControllerParamReq.SetControllerParamResp;
+import com.antiaction.zwave.messages.command.AlarmCommand.AlarmReport;
+import com.antiaction.zwave.messages.command.AlarmCommand.AlarmReportV2;
+import com.antiaction.zwave.messages.command.AlarmCommand.AlarmTypeSupportedReport;
 import com.antiaction.zwave.messages.command.BasicCommand.BasicReport;
 import com.antiaction.zwave.messages.command.BasicCommand.BasicReportV2;
 import com.antiaction.zwave.messages.command.BatteryCommand.BatteryReport;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReport;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorReportV2;
 import com.antiaction.zwave.messages.command.BinarySensorCommand.BinarySensorSupportedSensorReport;
-import com.antiaction.zwave.messages.command.BinarySwitchCommand;
 import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReport;
 import com.antiaction.zwave.messages.command.BinarySwitchCommand.BinarySwitchReportV2;
 import com.antiaction.zwave.messages.command.ClockCommand.ClockReport;
 import com.antiaction.zwave.messages.command.ConfigurationCommand.ConfigurationReport;
-import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecific;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand;
+import com.antiaction.zwave.messages.command.ManufacturerSpecificCommand.ManufacturerSpecificReport;
 import com.antiaction.zwave.messages.command.MultiLevelSensorCommand;
 import com.antiaction.zwave.messages.command.MultiLevelSensorCommand.MultiLevelSensorReport;
 import com.antiaction.zwave.messages.command.MultiLevelSensorCommand.MultiLevelSensorSupportedSensorReport;
@@ -40,6 +43,7 @@ import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.Thermosta
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointReport;
 import com.antiaction.zwave.messages.command.ThermostatSetpointCommand.ThermostatSetpointSupportedReport;
 import com.antiaction.zwave.messages.command.UnknownCommand;
+import com.antiaction.zwave.messages.command.VersionCommand;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionCommandClassReport;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV1;
 import com.antiaction.zwave.messages.command.VersionCommand.VersionReportV2;
@@ -240,21 +244,23 @@ public class TestZWave implements ApplicationListener {
 		sleep(10000);
 		*/
 
-		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
-		*/
 
-		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(3).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
 		sendDataResp.waitFor();
 		// debug
 		System.out.println(Constants.INDENT + sendDataResp.success);
 		sleep(10000);
-		*/
+
+		sendDataResp = controller.getSendDataReq().setNodeId(4).setPayload(ManufacturerSpecificCommand.getManufacturerSpecificGetReq()).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
 
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(BatteryCommand.assembleBatteryGetReq()).build().send();
@@ -392,6 +398,18 @@ public class TestZWave implements ApplicationListener {
 
 		sleep(10000);
 
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(VersionCommand.assembleVersionCommandClassGetReq((byte)0x29)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+
+		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(VersionCommand.assembleVersionCommandClassGetReq((byte)0x39)).build().send();
+		sendDataResp.waitFor();
+		// debug
+		System.out.println(Constants.INDENT + sendDataResp.success);
+		sleep(10000);
+
 		/*
 		sendDataResp = controller.getSendDataReq().setNodeId(2).setPayload(AlarmCommand.assembleBatteryReq()).build().send();
 		sendDataResp.waitFor();
@@ -470,7 +488,7 @@ public class TestZWave implements ApplicationListener {
 	 */
 	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
 		// debug
-		System.out.println("ApplicationUpdate nodeId: " + applicationUpdateResp.nodeId);
+		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " ApplicationUpdate");
 		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "      basicDeviceClass: " + applicationUpdateResp.basicDeviceClass.getLabel());
 		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "    genericDeviceClass: " + applicationUpdateResp.genericDeviceClass.getLabel());
 		if (applicationUpdateResp.optionalSpecificClass.isPresent()) {
@@ -483,7 +501,7 @@ public class TestZWave implements ApplicationListener {
 		CommandClass commandClass;
 		while (iter.hasNext()) {
 			commandClass = iter.next();
-			System.out.println(commandClass.getLabel());
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "          commandClass: " + commandClass.getLabel() + " (" + HexUtils.byteToHexString( + commandClass.ordinal()) + ")");
 		}
 		//byte[] data = new byte[] {(byte)0x13, (byte)applicationUpdateResp.nodeId, (byte)0x06, (byte)0x84, (byte)0x04, (byte)0x00, (byte)0x01, (byte)0x68, (byte)0x01, (byte)0x05, (byte)0x03};
 		//controller.queueOut.insert(FrameUtils.assemble(MessageType.Request, data));
@@ -493,7 +511,29 @@ public class TestZWave implements ApplicationListener {
 	public void onApplicationCommandHandler(ApplicationCommandHandlerResp applicationCommandHandlerResp) {
 		ApplicationCommandHandlerData data = applicationCommandHandlerResp.data;
 		if (data != null) {
-			if (data instanceof BasicReport) {
+			if (data instanceof AlarmReport) {
+				AlarmReport alarmResp = (AlarmReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report type: " + alarmResp.alarmType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report level: " + alarmResp.alarmLevel);
+			}
+			else if (data instanceof AlarmReportV2) {
+				AlarmReportV2 alarmResp = (AlarmReportV2)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report type: " + alarmResp.alarmType);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report level: " + alarmResp.alarmLevel);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report zenzor net source nodeid: " + alarmResp.zenzorNetSourceNodeId);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report status: " + alarmResp.zwaveAlarmStatus);
+				//System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report type: " + alarmResp.zwaveAlarmType);
+				//System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report event: " + alarmResp.zwaveAlarmEvent);
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report type: " + alarmResp.zwaveAlarmType.getLabel());
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm report event: " + alarmResp.zwaveAlarmEvent.getDescription());
+			}
+			else if (data instanceof AlarmTypeSupportedReport) {
+				AlarmTypeSupportedReport alarmTypeSupportedResp = (AlarmTypeSupportedReport)data;
+				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " alarm type supported v1: " + alarmTypeSupportedResp.v1Alarm);
+				// TODO
+				//public byte[] bitmask;
+			}
+			else if (data instanceof BasicReport) {
 				BasicReport basicResp = (BasicReport)data;
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " basic value: " + basicResp.value);
 			}
@@ -541,8 +581,8 @@ public class TestZWave implements ApplicationListener {
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " configuration number: " + configurationReport.parameterNumber);
 				System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " configuration value: " + configurationReport.value.value);
 			}
-			else if (data instanceof ManufacturerSpecific) {
-				ManufacturerSpecific manufacturerSpecificResp = (ManufacturerSpecific)data;
+			else if (data instanceof ManufacturerSpecificReport) {
+				ManufacturerSpecificReport manufacturerSpecificResp = (ManufacturerSpecificReport)data;
 		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + " manufactureId: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.manufactureId));
 		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "    deviceType: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceType));
 		        System.out.println(Constants.INDENT + "Node " + applicationCommandHandlerResp.nodeId + "      deviceId: " + HexUtils.byteCharToHexString(manufacturerSpecificResp.deviceId));

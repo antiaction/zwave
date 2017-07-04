@@ -13,10 +13,10 @@ public class ConfigurationValue {
 			configurationValue.value = data[idx++] << 24 | (data[idx++] & 255) << 16 | (data[idx++] & 255) << 8 | (data[idx++] & 255);
 			break;
 		case 2:
-			configurationValue.value = data[idx++] << 8 | (data[idx++] & 255);
+			configurationValue.value = (data[idx++] & 255) << 8 | (data[idx++] & 255);
 			break;
 		case 1:
-			configurationValue.value = data[idx++];
+			configurationValue.value = data[idx++] & 255;
 			break;
 		default:
 			break;

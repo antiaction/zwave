@@ -1,3 +1,6 @@
+[![Build Status](https://www.travis-ci.org/nclarkekb/zwave.svg?branch=master)](https://www.travis-ci.org/nclarkekb/zwave)
+[![codecov](https://codecov.io/gh/nclarkekb/zwave/branch/master/graph/badge.svg)](https://codecov.io/gh/nclarkekb/zwave)
+
 antiaction-zwave
 ================
 
@@ -16,6 +19,7 @@ Also working on a webapp as a user interface to a Z-Wave network.
 
 Started on a new version after I discovered the Z-Wave API documentation has been made public!
 
+* AlarmType and AlarmEvent definition classes added.
 * Alarm command implemented.
 * MultiCmd command partially implemented.
 * MultiLevelSensor command class checked against specifications.

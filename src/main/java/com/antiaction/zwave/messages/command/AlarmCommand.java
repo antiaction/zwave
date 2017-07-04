@@ -1,8 +1,15 @@
 package com.antiaction.zwave.messages.command;
 
+import com.antiaction.zwave.constants.AlarmEvent;
+import com.antiaction.zwave.constants.AlarmType;
 import com.antiaction.zwave.constants.CommandClass;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
+/**
+ * Alarm command class.
+ *
+ * @author nicl
+ */
 public class AlarmCommand {
 
 	private static final int COMMAND_CLASS = CommandClass.ALARM.getClassCode() & 255;
@@ -79,10 +86,14 @@ public class AlarmCommand {
 						AlarmReportV2 alarmReport = new AlarmReportV2();
 						alarmReport.alarmType = data[idx++] & 255;
 						alarmReport.alarmLevel = data[idx++] & 255;
-						alarmReport.zenzoeNetSourceNodeId = data[idx++] & 255;
+						alarmReport.zenzorNetSourceNodeId = data[idx++] & 255;
 						alarmReport.zwaveAlarmStatus = data[idx++] & 255;
-						alarmReport.zwaveAlarmType = data[idx++] & 255;
-						alarmReport.zwaveAlarmEvent = data[idx++] & 255;
+						int zwaveAlarmTypeId = data[idx++] & 255;
+						int zwaveAlarmEventId = data[idx++] & 255;
+						alarmReport.zwaveAlarmTypeId = zwaveAlarmTypeId;
+						alarmReport.zwaveAlarmEventId = zwaveAlarmEventId;
+						alarmReport.zwaveAlarmType = AlarmType.getAlarmType(zwaveAlarmTypeId);
+						alarmReport.zwaveAlarmEvent = alarmReport.zwaveAlarmType.getAlarmEvent(zwaveAlarmEventId);
 						// TODO
 						int numberOfEventParams = data[idx++] & 255;
 						return alarmReport;
@@ -114,10 +125,12 @@ public class AlarmCommand {
 	public static class AlarmReportV2 extends ApplicationCommandHandlerData {
 		public int alarmType;
 		public int alarmLevel;
-		public int zenzoeNetSourceNodeId;
+		public int zenzorNetSourceNodeId;
 		public int zwaveAlarmStatus;
-		public int zwaveAlarmType;
-		public int zwaveAlarmEvent;
+		public int zwaveAlarmTypeId;
+		public AlarmType zwaveAlarmType;
+		public int zwaveAlarmEventId;
+		public AlarmEvent zwaveAlarmEvent;
 	}
 
 	public static class AlarmTypeSupportedReport extends ApplicationCommandHandlerData {

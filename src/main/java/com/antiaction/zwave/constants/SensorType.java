@@ -12,11 +12,6 @@ public abstract class SensorType {
 
 	protected SensorScale[] sensorScales;
 
-	protected SensorType(int id, String label) {
-		this.id = id;
-		this.label = label;
-	}
-
 	protected SensorType(int id, String label, int version, SensorScale ... sensorScales) {
 		this.id = id;
 		this.label = label;
