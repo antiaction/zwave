@@ -101,8 +101,6 @@ public class TestZWave implements ApplicationListener {
 			System.exit(1);
 		}
 
-		Optional<GenericDeviceClass> gdc;
-
 		MemoryGetIdResp memoryGetIdResp = controller.getMemoryGetIdReq().build().send();
 		memoryGetIdResp.waitFor();
 		// debug
@@ -149,13 +147,23 @@ public class TestZWave implements ApplicationListener {
 			System.out.println(Constants.INDENT + "Node " + nodeId + " frequentlyListening: " + identifyNodeResp.frequentlyListening);
 			System.out.println(Constants.INDENT + "Node " + nodeId + "             beaming: " + identifyNodeResp.beaming);
 			System.out.println(Constants.INDENT + "Node " + nodeId + "            security: " + identifyNodeResp.security);
-			System.out.println(Constants.INDENT + "Node " + nodeId + "      basicDeviceClass: " + identifyNodeResp.basicDeviceClass.getLabel());
-			System.out.println(Constants.INDENT + "Node " + nodeId + "    genericDeviceClass: " + identifyNodeResp.genericDeviceClass.getLabel());
-			if (identifyNodeResp.optionalSpecificClass.isPresent()) {
-				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: " + identifyNodeResp.optionalSpecificClass.get().getLabel());
+			if (identifyNodeResp.basicDeviceClass != null) {
+				System.out.println(Constants.INDENT + "Node " + nodeId + "      basicDeviceClass: " + identifyNodeResp.basicDeviceClass.getLabel() + "(" + HexUtils.byteToHexString(identifyNodeResp.basicDeviceClassId) + ")");
 			}
 			else {
-				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: Unknown");
+				System.out.println(Constants.INDENT + "Node " + nodeId + "      basicDeviceClass: Unknown" + "(" + HexUtils.byteToHexString(identifyNodeResp.basicDeviceClassId) + ")");
+			}
+			if (identifyNodeResp.genericDeviceClass != null) {
+				System.out.println(Constants.INDENT + "Node " + nodeId + "    genericDeviceClass: " + identifyNodeResp.genericDeviceClass.getLabel() + "(" + HexUtils.byteToHexString(identifyNodeResp.genericDeviceClassId) + ")");
+			}
+			else {
+				System.out.println(Constants.INDENT + "Node " + nodeId + "    genericDeviceClass: Unknown" + "(" + HexUtils.byteToHexString(identifyNodeResp.genericDeviceClassId) + ")");
+			}
+			if (identifyNodeResp.optionalSpecificClass != null) {
+				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: " + identifyNodeResp.optionalSpecificClass.getLabel() + "(" + HexUtils.byteToHexString(identifyNodeResp.optionalSpecificClassId) + ")");
+			}
+			else {
+				System.out.println(Constants.INDENT + "Node " + nodeId + " optionalSpecificClass: Unknown" + "(" + HexUtils.byteToHexString(identifyNodeResp.optionalSpecificClassId) + ")");
 			}
 		}
 
@@ -489,13 +497,23 @@ public class TestZWave implements ApplicationListener {
 	public void onApplicationUpdate(ApplicationUpdateResp applicationUpdateResp) {
 		// debug
 		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " ApplicationUpdate");
-		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "      basicDeviceClass: " + applicationUpdateResp.basicDeviceClass.getLabel());
-		System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "    genericDeviceClass: " + applicationUpdateResp.genericDeviceClass.getLabel());
-		if (applicationUpdateResp.optionalSpecificClass.isPresent()) {
-			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: " + applicationUpdateResp.optionalSpecificClass.get().getLabel());
+		if (applicationUpdateResp.basicDeviceClass != null) {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "      basicDeviceClass: " + applicationUpdateResp.basicDeviceClass.getLabel() + "(" + HexUtils.byteToHexString(applicationUpdateResp.basicDeviceClassId) + ")");
 		}
 		else {
-			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: Unknown");
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "      basicDeviceClass: Unknown" + "(" + HexUtils.byteToHexString(applicationUpdateResp.basicDeviceClassId) + ")");
+		}
+		if (applicationUpdateResp.genericDeviceClass != null) {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "    genericDeviceClass: " + applicationUpdateResp.genericDeviceClass.getLabel() + "(" + HexUtils.byteToHexString(applicationUpdateResp.genericDeviceClassId) + ")");
+		}
+		else {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + "    genericDeviceClass: Unknown" + "(" + HexUtils.byteToHexString(applicationUpdateResp.genericDeviceClassId) + ")");
+		}
+		if (applicationUpdateResp.optionalSpecificClass != null) {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: " + applicationUpdateResp.optionalSpecificClass.getLabel() + "(" + HexUtils.byteToHexString(applicationUpdateResp.optionalSpecificClassId) + ")");
+		}
+		else {
+			System.out.println(Constants.INDENT + "Node " + applicationUpdateResp.nodeId + " optionalSpecificClass: Unknown" + "(" + HexUtils.byteToHexString(applicationUpdateResp.optionalSpecificClassId) + ")");
 		}
 		Iterator<CommandClass> iter = applicationUpdateResp.supportedCommandClassList.iterator();
 		CommandClass commandClass;

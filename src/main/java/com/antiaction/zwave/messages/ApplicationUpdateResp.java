@@ -31,11 +31,17 @@ public class ApplicationUpdateResp {
 
 	//public ApplicationUpdateData data;
 
+	public int basicDeviceClassId;
+
 	public BasicDeviceClass basicDeviceClass;
+
+	public int genericDeviceClassId;
 
 	public GenericDeviceClass genericDeviceClass;
 
-	public Optional<SpecificDeviceClass> optionalSpecificClass;
+	public int optionalSpecificClassId;
+
+	public SpecificDeviceClass optionalSpecificClass;
 
 	public Set<Integer> supportedCommandClassSet = new TreeSet<Integer>();
 
@@ -60,9 +66,14 @@ public class ApplicationUpdateResp {
 		payload = new byte[len];
 		System.arraycopy(data, idx, payload, 0, len);
 		// Diassemble payload.
-		basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
-		genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
-		optionalSpecificClass = SpecificDeviceClass.getType(genericDeviceClass, data[idx++] & 255);
+		basicDeviceClassId = data[idx++] & 255;
+		genericDeviceClassId = data[idx++] & 255;
+		optionalSpecificClassId = data[idx++] & 255;
+		basicDeviceClass = BasicDeviceClass.getType(basicDeviceClassId);
+		genericDeviceClass = GenericDeviceClass.getType(genericDeviceClassId);
+		if (genericDeviceClass != null) {
+			optionalSpecificClass = genericDeviceClass.getSpecificDeviceClass(optionalSpecificClassId);
+		}
 		int commandClassId;
 		Optional<CommandClass> optionalCommandClass; 
 		while (idx < data.length) {

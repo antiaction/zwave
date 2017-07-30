@@ -13,15 +13,9 @@ import com.antiaction.zwave.constants.SensorType;
 import com.antiaction.zwave.messages.ApplicationCommandHandlerData;
 
 /**
- * 
- * [2016-05-28 22:57:36.746 +0200] < 0x01 0x08 0x00 0x13 0x02 0x02 0x31 0x01 0x05 0xD1
- * [2016-05-28 22:57:36.787 +0200] > 0x01 0x0C 0x00 0x04 0x00 0x02 0x06 0x31 0x02 0x15 0x00 0x00 0x04 0xD1
- * [2016-05-22 00:59:16.509 +0200] > 0x01 0x0C 0x00 0x04 0x00 0x02 0x06 0x31 0x05 0x01 0x22 0x01 0x0C 0xE9
- * [2016-05-22 00:59:16.925 +0200] > 0x01 0x0B 0x00 0x04 0x00 0x02 0x05 0x31 0x05 0x05 0x01 0x27 0xE0
- * [2016-05-22 00:59:17.805 +0200] > 0x01 0x0C 0x00 0x04 0x00 0x02 0x06 0x31 0x05 0x03 0x0A 0x00 0x00 0xCE
- * [2016-05-22 00:59:17.925 +0200] > 0x01 0x0B 0x00 0x04 0x00 0x02 0x05 0x31 0x05 0x1B 0x01 0x00 0xD9
- * @author nicl
+ * MultiLevelSensor command class.
  *
+ * @author nicl
  */
 public class MultiLevelSensorCommand {
 
@@ -33,12 +27,6 @@ public class MultiLevelSensorCommand {
 	public static final int SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT_V5 = 0x02;
 	public static final int SENSOR_MULTILEVEL_SUPPORTED_GET_SCALE_V5 = 0x03;
 	public static final int SENSOR_MULTILEVEL_SUPPORTED_SCALE_REPORT_V5 = 0x06;
-
-	public static final int SENSOR_MULTILEVEL_SIZE_MASK = 0x07;
-	public static final int SENSOR_MULTILEVEL_SCALE_MASK = 0x18;
-	public static final int SENSOR_MULTILEVEL_SCALE_SHIFT = 0x03;
-	public static final int SENSOR_MULTILEVEL_PRECISION_MASK = 0xE0;
-	public static final int SENSOR_MULTILEVEL_PRECISION_SHIFT = 0x05;
 
 	protected MultiLevelSensorCommand() {
 	}
@@ -104,14 +92,14 @@ public class MultiLevelSensorCommand {
 						sensorMultiLevelReport.sensorType = sensorType.get();
 						sensorMultiLevelReport.sensorScaleId = sensorScaleId;
 						sensorMultiLevelReport.sensorScale = sensorMultiLevelReport.sensorType.getScale(sensorScaleId);
-						sensorMultiLevelReport.value = extractValue(data, idx);
+						sensorMultiLevelReport.value = MultiLevelSensorValue.extractValue(data, idx);
 						return sensorMultiLevelReport;
 					}
 					else {
 						MultiLevelSensorReport sensorMultiLevelReport = new MultiLevelSensorReport();
 						sensorMultiLevelReport.sensorTypeId = sensorTypeId;
 						sensorMultiLevelReport.sensorScaleId = sensorScaleId;
-						sensorMultiLevelReport.value = extractValue(data, idx);
+						sensorMultiLevelReport.value = MultiLevelSensorValue.extractValue(data, idx);
 						return sensorMultiLevelReport;
 					}
 				case SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT_V5:
@@ -164,45 +152,6 @@ public class MultiLevelSensorCommand {
 
 	public static class SensorMultiLevelSupportedScaleReport extends ApplicationCommandHandlerData {
 		public int scaleBitMask;
-	}
-
-	/**
-	 * Extract a decimal value from a byte array.
-	 * @param buffer the buffer to be parsed.
-	 * @param offset the offset at which to start reading
-	 * @return the extracted decimal value
-	 */
-	public static BigDecimal extractValue(byte[] buffer, int offset) {
-		int size = buffer[offset] & SENSOR_MULTILEVEL_SIZE_MASK;
-		int precision = (buffer[offset] & SENSOR_MULTILEVEL_PRECISION_MASK) >> SENSOR_MULTILEVEL_PRECISION_SHIFT;
-
-		if ((size + offset) >= buffer.length) {
-			throw new NumberFormatException();
-		}
-
-		int value = 0;
-		int i;
-		for (i = 0; i < size; ++i) {
-			value <<= 8;
-			value |= buffer[offset + i + 1] & 0xFF;
-		}
-
-		// Deal with sign extension. All values are signed
-		BigDecimal result;
-		if ((buffer[offset + 1] & 0x80) == 0x80) {
-			// MSB is signed
-			if (size == 1) {
-				value |= 0xffffff00;
-			}
-			else if (size == 2) {
-				value |= 0xffff0000;
-			}
-		}
-
-		result = BigDecimal.valueOf(value);
-
-		BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, precision));
-		return result.divide(divisor);
 	}
 
 }

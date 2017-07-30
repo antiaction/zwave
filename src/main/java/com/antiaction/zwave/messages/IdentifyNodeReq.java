@@ -1,6 +1,5 @@
 package com.antiaction.zwave.messages;
 
-import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
 import com.antiaction.zwave.Controller;
@@ -100,11 +99,17 @@ public class IdentifyNodeReq extends Request {
 
 		public boolean security;
 
+		public int basicDeviceClassId;
+
 		public BasicDeviceClass basicDeviceClass;
+
+		public int genericDeviceClassId;
 
 		public GenericDeviceClass genericDeviceClass;
 
-		public Optional<SpecificDeviceClass> optionalSpecificClass;
+		public int optionalSpecificClassId;
+
+		public SpecificDeviceClass optionalSpecificClass;
 
 		protected IdentifyNodeResp(Controller controller) {
 			this.controller = controller;
@@ -129,9 +134,14 @@ public class IdentifyNodeReq extends Request {
 			beaming = ((data[1] & 0x10) != 0);
 			security = ((data[1] & 0x01) != 0);
 			int idx = 3;
-			basicDeviceClass = BasicDeviceClass.getType(data[idx++] & 255).get();
-			genericDeviceClass = GenericDeviceClass.getType(data[idx++] & 255).get();
-			optionalSpecificClass = SpecificDeviceClass.getType(genericDeviceClass, data[idx++] & 255);
+			basicDeviceClassId = data[idx++] & 255;
+			genericDeviceClassId = data[idx++] & 255;
+			optionalSpecificClassId = data[idx++] & 255;
+			basicDeviceClass = BasicDeviceClass.getType(basicDeviceClassId);
+			genericDeviceClass = GenericDeviceClass.getType(genericDeviceClassId);
+			if (genericDeviceClass != null) {
+				optionalSpecificClass = genericDeviceClass.getSpecificDeviceClass(optionalSpecificClassId);
+			}
 			semaphore.release();
 		}
 

@@ -23,10 +23,10 @@ public abstract class SensorType {
 	 * Air Temperature.
 	 */
 
-	public static SensorType TEMPERATURE = new Temperature();
+	public static AirTemperature AIR_TEMPERATURE = new AirTemperature();
 
-	public static class Temperature extends SensorType {
-		public Temperature() {
+	public static class AirTemperature extends SensorType {
+		public AirTemperature() {
 			super(0x01, "Air Temperature", 1, CELSIUS, FAHRENHEIT);
 		}
 		public static SensorScale CELSIUS = new Celsius();
@@ -47,7 +47,7 @@ public abstract class SensorType {
 	 * General Purpose.
 	 */
 
-	public static SensorType GENERAL_PURPOSE = new GeneralPurpose();
+	public static GeneralPurpose GENERAL_PURPOSE = new GeneralPurpose();
 
 	public static class GeneralPurpose extends SensorType {
 		public GeneralPurpose() {
@@ -71,7 +71,7 @@ public abstract class SensorType {
 	 * Luminance.
 	 */
 
-	public static SensorType LUMINANCE = new Luminance();
+	public static Luminance LUMINANCE = new Luminance();
 
 	public static class Luminance extends SensorType {
 		public Luminance() {
@@ -95,7 +95,7 @@ public abstract class SensorType {
 	 * Power.
 	 */
 
-	public static SensorType POWER = new Power();
+	public static Power POWER = new Power();
 
 	public static class Power extends SensorType {
 		public Power() {
@@ -119,10 +119,10 @@ public abstract class SensorType {
 	 * Humidity.
 	 */
 
-	public static SensorType RELATIVE_HUMIDITY = new RelativeHumidity();
+	public static Humidity HUMIDITY = new Humidity();
 
-	public static class RelativeHumidity extends SensorType {
-		public RelativeHumidity() {
+	public static class Humidity extends SensorType {
+		public Humidity() {
 			super(0x05, "Humidity", 2, PERCENTAGE_VALUE, ABSOLUTE_HUMIDITY);
 		}
 		public static SensorScale PERCENTAGE_VALUE = new PercentageValue();
@@ -143,7 +143,7 @@ public abstract class SensorType {
 	 * Velocity.
 	 */
 
-	public static SensorType VELOCITY = new Velocity();
+	public static Velocity VELOCITY = new Velocity();
 
 	public static class Velocity extends SensorType {
 		public Velocity() {
@@ -167,7 +167,7 @@ public abstract class SensorType {
 	 * Direction.
 	 */
 
-	public static SensorType DIRECTION = new Direction();
+	public static Direction DIRECTION = new Direction();
 
 	public static class Direction extends SensorType {
 		public Direction() {
@@ -186,7 +186,7 @@ public abstract class SensorType {
 	 * Atmospheric Pressure.
 	 */
 
-	public static SensorType ATMOSPHERIC_PRESSURE = new AtmoephericPressure();
+	public static AtmoephericPressure ATMOSPHERIC_PRESSURE = new AtmoephericPressure();
 
 	public static class AtmoephericPressure extends SensorType {
 		public AtmoephericPressure() {
@@ -210,7 +210,7 @@ public abstract class SensorType {
 	 * Barometric Pressure.
 	 */
 
-	public static SensorType BAROMETRIC_PRESSURE = new BarometricPressure();
+	public static BarometricPressure BAROMETRIC_PRESSURE = new BarometricPressure();
 
 	public static class BarometricPressure extends SensorType {
 		public BarometricPressure() {
@@ -234,7 +234,7 @@ public abstract class SensorType {
 	 * Solar Radiation.
 	 */
 
-	public static SensorType SOLAR_RADIATION = new SolarRadiation();
+	public static SolarRadiation SOLAR_RADIATION = new SolarRadiation();
 
 	public static class SolarRadiation extends SensorType {
 		public SolarRadiation() {
@@ -252,7 +252,7 @@ public abstract class SensorType {
 	 * Dew point.
 	 */
 
-	public static SensorType DEW_POINT = new DewPoint();
+	public static DewPoint DEW_POINT = new DewPoint();
 
 	public static class DewPoint extends SensorType {
 		public DewPoint() {
@@ -276,7 +276,7 @@ public abstract class SensorType {
 	 * Rain rate.
 	 */
 
-	public static SensorType RAIN_RATE = new RainRate();
+	public static RainRate RAIN_RATE = new RainRate();
 
 	public static class RainRate extends SensorType {
 		public RainRate() {
@@ -300,7 +300,7 @@ public abstract class SensorType {
 	 * Tide level.
 	 */
 
-	public static SensorType TIDE_LEVEL = new TideLevel();
+	public static TideLevel TIDE_LEVEL = new TideLevel();
 
 	public static class TideLevel extends SensorType {
 		public TideLevel() {
@@ -324,7 +324,7 @@ public abstract class SensorType {
 	 * Weight.
 	 */
 
-	public static SensorType WEIGHT = new Weight();
+	public static Weight WEIGHT = new Weight();
 
 	public static class Weight extends SensorType {
 		public Weight() {
@@ -348,7 +348,7 @@ public abstract class SensorType {
 	 * Voltage.
 	 */
 
-	public static SensorType VOLTAGE = new Voltage();
+	public static Voltage VOLTAGE = new Voltage();
 
 	public static class Voltage extends SensorType {
 		public Voltage() {
@@ -372,7 +372,7 @@ public abstract class SensorType {
 	 * Current.
 	 */
 
-	public static SensorType CURRENT = new Current();
+	public static Current CURRENT = new Current();
 
 	public static class Current extends SensorType {
 		public Current() {
@@ -396,7 +396,7 @@ public abstract class SensorType {
 	 * Carbon Dioxide CO2-level.
 	 */
 
-	public static SensorType CO2 = new CarbonDioxideLevel();
+	public static CarbonDioxideLevel CO2 = new CarbonDioxideLevel();
 
 	public static class CarbonDioxideLevel extends SensorType {
 		public CarbonDioxideLevel() {
@@ -414,7 +414,7 @@ public abstract class SensorType {
 	 * Air flow.
 	 */
 
-	public static SensorType AIR_FLOW = new AirFlow();
+	public static AirFlow AIR_FLOW = new AirFlow();
 
 	public static class AirFlow extends SensorType {
 		public AirFlow() {
@@ -438,7 +438,7 @@ public abstract class SensorType {
 	 * Tank capacity.
 	 */
 
-	public static SensorType TANK_CAPACITY = new TankCapacity();
+	public static TankCapacity TANK_CAPACITY = new TankCapacity();
 
 	public static class TankCapacity extends SensorType {
 		public TankCapacity() {
@@ -468,7 +468,7 @@ public abstract class SensorType {
 	 * Distance.
 	 */
 
-	public static SensorType DISTANCE = new Distance();
+	public static Distance DISTANCE = new Distance();
 
 	public static class Distance extends SensorType {
 		public Distance() {
@@ -503,7 +503,7 @@ public abstract class SensorType {
 	 * A device implementing the Angle Position Sensor Type SHOULD also implement the Direction (0x07) Sensor Type.
 	 */
 
-	public static SensorType ANGLE_POSITION = new AnglePosition();
+	public static AnglePosition ANGLE_POSITION = new AnglePosition();
 
 	public static class AnglePosition extends SensorType {
 		public AnglePosition() {
@@ -535,7 +535,7 @@ public abstract class SensorType {
 	 * Rotation.
 	 */
 
-	public static SensorType ROTATION = new Rotation();
+	public static Rotation ROTATION = new Rotation();
 
 	public static class Rotation extends SensorType {
 		public Rotation() {
@@ -558,7 +558,7 @@ public abstract class SensorType {
 	/*
 	 * Water Temperature.
 	 */
-	public static SensorType WATER_TEMPERATURE = new WaterTemperature();
+	public static WaterTemperature WATER_TEMPERATURE = new WaterTemperature();
 
 	public static class WaterTemperature extends SensorType {
 		public WaterTemperature() {
@@ -582,7 +582,7 @@ public abstract class SensorType {
 	 * Soil Temperature.
 	 */
 
-	public static SensorType SOIL_TEMPERATURE = new SoilTemperature();
+	public static SoilTemperature SOIL_TEMPERATURE = new SoilTemperature();
 
 	public static class SoilTemperature extends SensorType {
 		public SoilTemperature() {
@@ -606,7 +606,7 @@ public abstract class SensorType {
 	 * Seismic Intensity.
 	 */
 
-	public static SensorType SEISMIC_INTENSITY = new SeismicIntensity();
+	public static SeismicIntensity SEISMIC_INTENSITY = new SeismicIntensity();
 
 	public static class SeismicIntensity extends SensorType {
 		public SeismicIntensity() {
@@ -642,7 +642,7 @@ public abstract class SensorType {
 	 * Seismic Magnitude.
 	 */
 
-	public static SensorType SEISMIC_MAGNITUDE = new SeismicMagnitude();
+	public static SeismicMagnitude SEISMIC_MAGNITUDE = new SeismicMagnitude();
 
 	public static class SeismicMagnitude extends SensorType {
 		public SeismicMagnitude() {
@@ -678,7 +678,7 @@ public abstract class SensorType {
 	 * Ultraviolet.
 	 */
 
-	public static SensorType ULTRAVIOLET = new UltraViolet();
+	public static UltraViolet ULTRAVIOLET = new UltraViolet();
 
 	public static class UltraViolet extends SensorType {
 		public UltraViolet() {
@@ -697,7 +697,7 @@ public abstract class SensorType {
 	 * Electrical Resistivity.
 	 */
 
-	public static SensorType ELECTRICAL_RESISTIVITY = new ElectricalResistivity();
+	public static ElectricalResistivity ELECTRICAL_RESISTIVITY = new ElectricalResistivity();
 
 	public static class ElectricalResistivity extends SensorType {
 		public ElectricalResistivity() {
@@ -715,7 +715,7 @@ public abstract class SensorType {
 	 * Electrical Conductivity.
 	 */
 
-	public static SensorType ELECTRICAL_CONDUCTIVITY = new ElectricalConductivity();
+	public static ElectricalConductivity ELECTRICAL_CONDUCTIVITY = new ElectricalConductivity();
 
 	public static class ElectricalConductivity extends SensorType {
 		public ElectricalConductivity() {
@@ -733,7 +733,7 @@ public abstract class SensorType {
 	 * Loudness.
 	 */
 
-	public static SensorType LOUDNESS = new Loudness();
+	public static Loudness LOUDNESS = new Loudness();
 
 	public static class Loudness extends SensorType {
 		public Loudness() {
@@ -757,7 +757,7 @@ public abstract class SensorType {
 	 * Moisture.
 	 */
 
-	public static SensorType MOISTURE = new Moisture();
+	public static Moisture MOISTURE = new Moisture();
 
 	public static class Moisture extends SensorType {
 		public Moisture() {
@@ -793,7 +793,7 @@ public abstract class SensorType {
 	 * Frequency.
 	 */
 
-	public static SensorType FREQUENCY = new Frequency();
+	public static Frequency FREQUENCY = new Frequency();
 
 	public static class Frequency extends SensorType {
 		public Frequency() {
@@ -821,7 +821,7 @@ public abstract class SensorType {
 	 * Time.
 	 */
 
-	public static SensorType TIME = new Time();
+	public static Time TIME = new Time();
 
 	public static class Time extends SensorType {
 		public Time() {
@@ -839,7 +839,7 @@ public abstract class SensorType {
 	 * Target Temperature.
 	 */
 
-	public static SensorType TARGET_TEMPERATURE = new TargetTemperature();
+	public static TargetTemperature TARGET_TEMPERATURE = new TargetTemperature();
 
 	public static class TargetTemperature extends SensorType {
 		public TargetTemperature() {
@@ -863,7 +863,7 @@ public abstract class SensorType {
 	 * Particulate Matter 2.5.
 	 */
 
-	public static SensorType PARTICULATE_MATTER_25 = new ParticulateMatter25();
+	public static ParticulateMatter25 PARTICULATE_MATTER_25 = new ParticulateMatter25();
 
 	public static class ParticulateMatter25 extends SensorType {
 		public ParticulateMatter25() {
@@ -887,7 +887,7 @@ public abstract class SensorType {
 	 * Formaldehyde CH2O-level.
 	 */
 
-	public static SensorType FORMALDEHYDE_CH2O_LEVEL = new FormaldehydeCH2OLevel();
+	public static FormaldehydeCH2OLevel FORMALDEHYDE_CH2O_LEVEL = new FormaldehydeCH2OLevel();
 
 	public static class FormaldehydeCH2OLevel extends SensorType {
 		public FormaldehydeCH2OLevel() {
@@ -905,7 +905,7 @@ public abstract class SensorType {
 	 * Radon Concentration.
 	 */
 
-	public static SensorType RADON_CONCENTRATION = new RadonConcentration();
+	public static RadonConcentration RADON_CONCENTRATION = new RadonConcentration();
 
 	public static class RadonConcentration extends SensorType {
 		public RadonConcentration() {
@@ -929,7 +929,7 @@ public abstract class SensorType {
 	 * Methane Density CH4.
 	 */
 
-	public static SensorType METHANE_DENSITY_CH4 = new MethaneDensityCH4();
+	public static MethaneDensityCH4 METHANE_DENSITY_CH4 = new MethaneDensityCH4();
 
 	public static class MethaneDensityCH4 extends SensorType {
 		public MethaneDensityCH4() {
@@ -947,7 +947,7 @@ public abstract class SensorType {
 	 * Volatile Organic Compound.
 	 */
 
-	public static SensorType VOLATILE_ORGANIC_COMPOUND = new VolatileOrganicCompound();
+	public static VolatileOrganicCompound VOLATILE_ORGANIC_COMPOUND = new VolatileOrganicCompound();
 
 	public static class VolatileOrganicCompound extends SensorType {
 		public VolatileOrganicCompound() {
@@ -971,7 +971,7 @@ public abstract class SensorType {
 	 * Carbon Monoxide CO-level.
 	 */
 
-	public static SensorType CARBON_MONOXIDE_CO_LEVEL = new CarbonMonoxideCOLevel();
+	public static CarbonMonoxideCOLevel CARBON_MONOXIDE_CO_LEVEL = new CarbonMonoxideCOLevel();
 
 	public static class CarbonMonoxideCOLevel extends SensorType {
 		public CarbonMonoxideCOLevel() {
@@ -995,7 +995,7 @@ public abstract class SensorType {
 	 * Soil Humidity.
 	 */
 
-	public static SensorType SOIL_HUMIDITY = new SoilHumidity();
+	public static SoilHumidity SOIL_HUMIDITY = new SoilHumidity();
 	public static class SoilHumidity extends SensorType {
 		public SoilHumidity() {
 			super(0x29, "Soil Humidity", 7, PERCENTAGE_VALUE);
@@ -1012,7 +1012,7 @@ public abstract class SensorType {
 	 * Soil Reactivity.
 	 */
 
-	public static SensorType SOIL_REACTIVITY = new SoilReactivity();
+	public static SoilReactivity SOIL_REACTIVITY = new SoilReactivity();
 	public static class SoilReactivity extends SensorType {
 		public SoilReactivity() {
 			super(0x2A, "Soil Reactivity", 7, ACIDITY);
@@ -1029,7 +1029,7 @@ public abstract class SensorType {
 	 * Soil Salinity.
 	 */
 
-	public static SensorType SOIL_SALINITY = new SoilSalinity();
+	public static SoilSalinity SOIL_SALINITY = new SoilSalinity();
 
 	public static class SoilSalinity extends SensorType {
 		public SoilSalinity() {
@@ -1047,7 +1047,7 @@ public abstract class SensorType {
 	 * Heart Rate.
 	 */
 
-	public static SensorType HEART_RATE = new HeartRate();
+	public static HeartRate HEART_RATE = new HeartRate();
 
 	public static class HeartRate extends SensorType {
 		public HeartRate() {
@@ -1065,7 +1065,7 @@ public abstract class SensorType {
 	 * Blood Pressure.
 	 */
 
-	public static SensorType BLOOD_PRESSURE = new BloodPressure();
+	public static BloodPressure BLOOD_PRESSURE = new BloodPressure();
 
 	public static class BloodPressure extends SensorType {
 		public BloodPressure() {
@@ -1089,7 +1089,7 @@ public abstract class SensorType {
 	 * Muscle Mass.
 	 */
 
-	public static SensorType MUSCLE_MASS = new MuscleMass();
+	public static MuscleMass MUSCLE_MASS = new MuscleMass();
 
 	public static class MuscleMass extends SensorType {
 		public MuscleMass() {
@@ -1107,7 +1107,7 @@ public abstract class SensorType {
 	 * Fat Mass.
 	 */
 
-	public static SensorType FAT_MASS = new FatMass();
+	public static FatMass FAT_MASS = new FatMass();
 
 	public static class FatMass extends SensorType {
 		public FatMass() {
@@ -1125,7 +1125,7 @@ public abstract class SensorType {
 	 * Bone Mass.
 	 */
 
-	public static SensorType BONE_MASS = new BoneMass();
+	public static BoneMass BONE_MASS = new BoneMass();
 
 	public static class BoneMass extends SensorType {
 		public BoneMass() {
@@ -1143,7 +1143,7 @@ public abstract class SensorType {
 	 * Total Body Water, TBW.
 	 */
 
-	public static SensorType TOTAL_BODY_WATER = new TotalBodyWater();
+	public static TotalBodyWater TOTAL_BODY_WATER = new TotalBodyWater();
 
 	public static class TotalBodyWater extends SensorType {
 		public TotalBodyWater() {
@@ -1161,7 +1161,7 @@ public abstract class SensorType {
 	 * Basic Metabolic Rate, BMR.
 	 */
 
-	public static SensorType BASIC_METABOLIC_RATE = new BasicMetabolicRate();
+	public static BasicMetabolicRate BASIC_METABOLIC_RATE = new BasicMetabolicRate();
 
 	public static class BasicMetabolicRate extends SensorType {
 		public BasicMetabolicRate() {
@@ -1179,7 +1179,7 @@ public abstract class SensorType {
 	 * Body Mass Index, BMI.
 	 */
 
-	public static SensorType BODY_BASS_INDEX = new BodyMassIndex();
+	public static BodyMassIndex BODY_BASS_INDEX = new BodyMassIndex();
 
 	public static class BodyMassIndex extends SensorType {
 		public BodyMassIndex() {
@@ -1197,7 +1197,7 @@ public abstract class SensorType {
 	 * Acceleration, X-axis.
 	 */
 
-	public static SensorType ACCELERATION_X_AXIS = new AccelerationXAxis();
+	public static AccelerationXAxis ACCELERATION_X_AXIS = new AccelerationXAxis();
 
 	public static class AccelerationXAxis extends SensorType {
 		public AccelerationXAxis() {
@@ -1215,7 +1215,7 @@ public abstract class SensorType {
 	 * Acceleration, Y-axis.
 	 */
 
-	public static SensorType ACCELERATION_Y_AXIS = new AccelerationYAxis();
+	public static AccelerationYAxis ACCELERATION_Y_AXIS = new AccelerationYAxis();
 
 	public static class AccelerationYAxis extends SensorType {
 		public AccelerationYAxis() {
@@ -1233,7 +1233,7 @@ public abstract class SensorType {
 	 * Acceleration, Z-axis.
 	 */
 
-	public static SensorType ACCELERATION_Z_AXIS = new AccelerationZAxis();
+	public static AccelerationZAxis ACCELERATION_Z_AXIS = new AccelerationZAxis();
 
 	public static class AccelerationZAxis extends SensorType {
 		public AccelerationZAxis() {
@@ -1251,7 +1251,7 @@ public abstract class SensorType {
 	 * Smoke Density.
 	 */
 
-	public static SensorType SMOKE_DENSITY = new SmokeDensity();
+	public static SmokeDensity SMOKE_DENSITY = new SmokeDensity();
 
 	public static class SmokeDensity extends SensorType {
 		public SmokeDensity() {
@@ -1269,7 +1269,7 @@ public abstract class SensorType {
 	 * Water Flow.
 	 */
 
-	public static SensorType WATER_FLOW = new WaterFlow();
+	public static WaterFlow WATER_FLOW = new WaterFlow();
 
 	public static class WaterFlow extends SensorType {
 		public WaterFlow() {
@@ -1287,7 +1287,7 @@ public abstract class SensorType {
 	 * Water Pressure.
 	 */
 
-	public static SensorType WATER_PRESSURE = new WaterPressure();
+	public static WaterPressure WATER_PRESSURE = new WaterPressure();
 
 	public static class WaterPressure extends SensorType {
 		public WaterPressure() {
@@ -1305,7 +1305,7 @@ public abstract class SensorType {
 	 * RF Signal Strength.
 	 */
 
-	public static SensorType RF_SIGNAL_STRENGTH = new RFSignalStrength();
+	public static RFSignalStrength RF_SIGNAL_STRENGTH = new RFSignalStrength();
 
 	public static class RFSignalStrength extends SensorType {
 		public RFSignalStrength() {
@@ -1331,7 +1331,7 @@ public abstract class SensorType {
 	 * Particulate Matter 10.
 	 */
 
-	public static SensorType PARTICULATE_MATTER_10 = new ParticulateMatter10();
+	public static ParticulateMatter10 PARTICULATE_MATTER_10 = new ParticulateMatter10();
 
 	public static class ParticulateMatter10 extends SensorType {
 		public ParticulateMatter10() {
@@ -1355,7 +1355,7 @@ public abstract class SensorType {
 	 * Respiratory Rate.
 	 */
 
-	public static SensorType RESPIRATORY_RATE = new RespiratoryRate();
+	public static RespiratoryRate RESPIRATORY_RATE = new RespiratoryRate();
 
 	public static class RespiratoryRate extends SensorType {
 		public RespiratoryRate() {
@@ -1388,11 +1388,11 @@ public abstract class SensorType {
 
 	static {
 		SensorType[] sensorTypesDefined = {
-				TEMPERATURE,
+				AIR_TEMPERATURE,
 				GENERAL_PURPOSE,
 				LUMINANCE,
 				POWER,
-				RELATIVE_HUMIDITY,
+				HUMIDITY,
 				VELOCITY,
 				DIRECTION,
 				ATMOSPHERIC_PRESSURE,

@@ -32,7 +32,7 @@ public abstract class AlarmType {
 	 * Smoke Alarm.
 	 */
 
-	public static AlarmType SMOKE_ALARM = new SmokeAlarm();
+	public static SmokeAlarm SMOKE_ALARM = new SmokeAlarm();
 
 	public static class SmokeAlarm extends AlarmType {
 		public SmokeAlarm() {
@@ -63,7 +63,7 @@ public abstract class AlarmType {
 	 * CO Alarm.
 	 */
 
-	public static AlarmType CO_ALARM = new COAlarm();
+	public static COAlarm CO_ALARM = new COAlarm();
 
 	public static class COAlarm extends AlarmType {
 		public COAlarm() {
@@ -94,7 +94,7 @@ public abstract class AlarmType {
 	 * CO2 Alarm.
 	 */
 
-	public static AlarmType CO2_ALARM = new CO2Alarm();
+	public static CO2Alarm CO2_ALARM = new CO2Alarm();
 
 	public static class CO2Alarm extends AlarmType {
 		public CO2Alarm() {
@@ -125,7 +125,7 @@ public abstract class AlarmType {
 	 * Heat Alarm.
 	 */
 
-	public static AlarmType HEAT_ALARM = new HeatAlarm();
+	public static HeatAlarm HEAT_ALARM = new HeatAlarm();
 
 	public static class HeatAlarm extends AlarmType {
 		public HeatAlarm() {
@@ -182,7 +182,7 @@ public abstract class AlarmType {
 	 * Water Alarm.
 	 */
 
-	public static AlarmType WATER_ALARM = new WaterAlarm();
+	public static WaterAlarm WATER_ALARM = new WaterAlarm();
 
 	public static class WaterAlarm extends AlarmType {
 		public WaterAlarm() {
@@ -226,7 +226,7 @@ public abstract class AlarmType {
 	 * Access Control Alarm.
 	 */
 
-	public static AlarmType ACCESS_CONTROL_ALARM = new AccessControlAlarm();
+	public static AccessControlAlarm ACCESS_CONTROL_ALARM = new AccessControlAlarm();
 
 	public static class AccessControlAlarm extends AlarmType {
 		public AccessControlAlarm() {
@@ -282,7 +282,7 @@ public abstract class AlarmType {
 	 * Burglar Alarm.
 	 */
 
-	public static AlarmType BURGLAR_ALARM = new BurglarAlarm();
+	public static BurglarAlarm BURGLAR_ALARM = new BurglarAlarm();
 
 	public static class BurglarAlarm extends AlarmType {
 		public BurglarAlarm() {
@@ -338,7 +338,7 @@ public abstract class AlarmType {
 	 * Power Management Alarm.
 	 */
 
-	public static AlarmType POWER_MANAGEMENT_ALARM = new PowerManagementAlarm();
+	public static PowerManagementAlarm POWER_MANAGEMENT_ALARM = new PowerManagementAlarm();
 
 	public static class PowerManagementAlarm extends AlarmType {
 		public PowerManagementAlarm() {
@@ -386,7 +386,7 @@ public abstract class AlarmType {
 	 * System Alarm.
 	 */
 
-	public static AlarmType SYSTEM_ALARM = new SystemAlarm();
+	public static SystemAlarm SYSTEM_ALARM = new SystemAlarm();
 
 	public static class SystemAlarm extends AlarmType {
 		public SystemAlarm() {
@@ -416,7 +416,7 @@ public abstract class AlarmType {
 	 * Emergency Alarm.
 	 */
 
-	public static AlarmType EMERGENCY_ALARM = new EmergencyAlarm();
+	public static EmergencyAlarm EMERGENCY_ALARM = new EmergencyAlarm();
 
 	public static class EmergencyAlarm extends AlarmType {
 		public EmergencyAlarm() {
@@ -452,7 +452,7 @@ public abstract class AlarmType {
 	 * Alarm clock.
 	 */
 
-	public static AlarmType ALARM_CLOCK = new AlarmClock();
+	public static AlarmClock ALARM_CLOCK = new AlarmClock();
 
 	public static class AlarmClock extends AlarmType {
 		public AlarmClock() {
@@ -471,7 +471,6 @@ public abstract class AlarmType {
 			super(id, label);
 		}
 	}
-
 
 	protected static final AlarmType[] alarmTypes = new AlarmType[256];
 
